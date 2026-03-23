@@ -92,7 +92,7 @@ export function AppNav() {
       </aside>
 
       {/* ── Mobile bottom tab bar ──────────────────────────────────────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-black/[0.06] z-40 flex">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-black/[0.06] z-40 flex pb-safe">
         {mobileItems.map(({ href, label, icon: Icon }) => {
           const active = href === "/assessment/new"
             ? false
@@ -103,7 +103,7 @@ export function AppNav() {
               key={href}
               href={href}
               className={cn(
-                "flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-medium transition-colors",
+                "flex-1 flex flex-col items-center gap-1 pt-3 pb-3 text-[10px] font-medium transition-colors min-h-[56px]",
                 isNew
                   ? "text-[#1D1D1F]"
                   : active
@@ -112,8 +112,8 @@ export function AppNav() {
               )}
             >
               {isNew ? (
-                <div className="w-6 h-6 bg-[#1D1D1F] rounded-lg flex items-center justify-center mb-0.5">
-                  <Icon className="h-3.5 w-3.5 text-white" />
+                <div className="w-7 h-7 bg-[#1D1D1F] rounded-xl flex items-center justify-center mb-0.5">
+                  <Icon className="h-4 w-4 text-white" />
                 </div>
               ) : (
                 <Icon className={cn("h-5 w-5", active ? "text-[#1D1D1F]" : "text-[#AEAEB2]")} />

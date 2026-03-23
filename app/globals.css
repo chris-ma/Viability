@@ -32,6 +32,9 @@ body {
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
+/* iOS safe area for bottom nav */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
 /* ── Scrollbar ─────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--c-bg-secondary); }

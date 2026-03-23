@@ -1,3 +1,5 @@
+import { auth } from "@clerk/nextjs/server"
+import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
@@ -142,13 +144,16 @@ function AppMockup() {
   )
 }
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const { userId } = await auth()
+  if (userId) redirect("/dashboard")
+
   return (
     <div className="min-h-screen bg-white">
 
       {/* ── Nav ────────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.06]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-black/[0.06]">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-7 h-7 bg-[#1D1D1F] rounded-lg flex items-center justify-center">
               <span className="text-white text-xs font-bold">V</span>
@@ -157,11 +162,11 @@ export default function LandingPage() {
           </Link>
           <div className="flex items-center gap-2">
             <Link href="/sign-in">
-              <Button variant="ghost" size="sm" className="text-[#6E6E73] hover:text-[#1D1D1F]">Sign in</Button>
+              <Button variant="ghost" size="sm" className="text-[#6E6E73] hover:text-[#1D1D1F] px-3">Sign in</Button>
             </Link>
             <Link href="/sign-up">
               <Button size="sm" className="bg-[#1D1D1F] text-white hover:bg-black rounded-full px-4">
-                Start Free
+                Get Started
               </Button>
             </Link>
           </div>
@@ -169,37 +174,37 @@ export default function LandingPage() {
       </header>
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
-      <section className="pt-24 pb-12 px-4 sm:px-6">
+      <section className="pt-16 sm:pt-24 pb-10 sm:pb-12 px-5 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <AnimatedSection delay={0}>
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 bg-[#F5F5F7] rounded-full px-4 py-1.5 mb-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                <span className="text-[13px] text-[#6E6E73] font-medium">Free to start · No credit card required</span>
+            <div className="text-center mb-10 sm:mb-14">
+              <div className="inline-flex items-center gap-2 bg-[#F5F5F7] rounded-full px-3.5 py-1.5 mb-6 sm:mb-8">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                <span className="text-[12px] sm:text-[13px] text-[#6E6E73] font-medium">Free to start · No credit card</span>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-bold text-[#1D1D1F] leading-[1.06] tracking-tight mb-6">
+              <h1 className="text-[38px] sm:text-6xl lg:text-[72px] font-bold text-[#1D1D1F] leading-[1.06] tracking-tight mb-5 sm:mb-6">
                 Know if your idea<br />
                 <span className="text-[#6E6E73]">is worth building.</span>
               </h1>
 
-              <p className="text-xl text-[#6E6E73] max-w-2xl mx-auto mb-4 leading-relaxed font-normal">
+              <p className="text-[17px] sm:text-xl text-[#6E6E73] max-w-2xl mx-auto mb-3 sm:mb-4 leading-relaxed font-normal">
                 Get a scored, evidence-based verdict on your business idea across 8 viability dimensions — before you spend a single penny building the wrong thing.
               </p>
-              <p className="text-sm text-[#AEAEB2] max-w-xl mx-auto mb-10">
+              <p className="text-sm text-[#AEAEB2] max-w-xs sm:max-w-xl mx-auto mb-8 sm:mb-10">
                 Mistakes aren&apos;t failures. They&apos;re the curriculum. Viability First helps you learn faster.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link href="/sign-up">
-                  <Button size="xl" className="w-full sm:w-auto bg-[#1D1D1F] text-white hover:bg-black rounded-2xl shadow-lg">
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <Link href="/sign-up" className="w-full sm:w-auto">
+                  <Button size="xl" className="w-full sm:w-auto bg-[#1D1D1F] text-white hover:bg-black rounded-2xl shadow-lg text-base">
                     Assess My Idea Free
                     <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
-                <Link href="/demo">
-                  <Button size="xl" variant="outline" className="w-full sm:w-auto rounded-2xl border-[#D2D2D7] text-[#1D1D1F] hover:bg-[#F5F5F7]">
-                    View Demo Assessment
+                <Link href="/demo" className="w-full sm:w-auto">
+                  <Button size="xl" variant="outline" className="w-full sm:w-auto rounded-2xl border-[#D2D2D7] text-[#1D1D1F] hover:bg-[#F5F5F7] text-base">
+                    View Demo
                   </Button>
                 </Link>
               </div>
@@ -213,8 +218,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Stats ──────────────────────────────────────────────────────────── */}
-      <section className="py-20 bg-[#1D1D1F]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <section className="py-14 sm:py-20 bg-[#1D1D1F]">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
             <p className="text-center text-xs font-semibold mb-12 uppercase tracking-widest text-white/30">
               Why most startups fail — and why you need this before you build
@@ -253,11 +258,11 @@ export default function LandingPage() {
       </section>
 
       {/* ── How it works ───────────────────────────────────────────────────── */}
-      <section className="py-24 bg-[#F5F5F7]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <section className="py-16 sm:py-24 bg-[#F5F5F7]">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl sm:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">How it works</h2>
+            <div className="text-center mb-10 sm:mb-16">
+              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">How it works</h2>
               <p className="text-lg text-[#6E6E73]">Three steps. Thirty minutes. An honest answer.</p>
             </div>
           </AnimatedSection>
@@ -300,11 +305,11 @@ export default function LandingPage() {
       </section>
 
       {/* ── 8 Dimensions ───────────────────────────────────────────────────── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <section className="py-16 sm:py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl sm:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">8 Viability Dimensions</h2>
+            <div className="text-center mb-10 sm:mb-16">
+              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">8 Viability Dimensions</h2>
               <p className="text-lg text-[#6E6E73]">Each weighted by its empirical correlation to startup failure</p>
             </div>
           </AnimatedSection>
@@ -328,11 +333,11 @@ export default function LandingPage() {
       </section>
 
       {/* ── Verdicts ───────────────────────────────────────────────────────── */}
-      <section className="py-24 bg-[#F5F5F7]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <section className="py-16 sm:py-24 bg-[#F5F5F7]">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl sm:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">Clear verdicts. No fluff.</h2>
+            <div className="text-center mb-10 sm:mb-16">
+              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">Clear verdicts. No fluff.</h2>
               <p className="text-lg text-[#6E6E73] max-w-xl mx-auto">
                 We&apos;ll tell you exactly where you stand — even if that means pivoting. That&apos;s not failure, that&apos;s wisdom.
               </p>
@@ -356,15 +361,15 @@ export default function LandingPage() {
       </section>
 
       {/* ── Fix-It ─────────────────────────────────────────────────────────── */}
-      <section className="py-24 bg-[#1D1D1F]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <section className="py-16 sm:py-24 bg-[#1D1D1F]">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 items-center">
           <AnimatedSection direction="left">
             <div>
               <div className="inline-flex items-center gap-2 bg-white/[0.08] rounded-full px-4 py-1.5 mb-6">
                 <RefreshCcw className="h-3 w-3 text-white/60" />
                 <span className="text-[13px] font-medium text-white/60">Fix-It Modules</span>
               </div>
-              <h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight leading-tight mb-5">
+              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight mb-5">
                 Scored poorly?<br />That&apos;s the starting line.
               </h2>
               <p className="text-lg text-white/50 mb-8 leading-relaxed">
@@ -416,11 +421,11 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────────────────── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <section className="py-16 sm:py-24 bg-white">
+        <div className="max-w-5xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl sm:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-3">Simple pricing</h2>
+            <div className="text-center mb-10 sm:mb-16">
+              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-3">Simple pricing</h2>
               <p className="text-lg text-[#6E6E73]">Start free. Upgrade when you&apos;re ready to go deeper.</p>
             </div>
           </AnimatedSection>
@@ -501,10 +506,10 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA ────────────────────────────────────────────────────────────── */}
-      <section className="py-24 bg-[#F5F5F7]">
+      <section className="py-16 sm:py-24 bg-[#F5F5F7]">
         <AnimatedSection>
           <div className="max-w-2xl mx-auto px-4 text-center">
-            <h2 className="text-4xl sm:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-5">
+            <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-5">
               The best founders test their assumptions first.
             </h2>
             <p className="text-lg text-[#6E6E73] mb-10 leading-relaxed">
@@ -522,7 +527,7 @@ export default function LandingPage() {
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
       <footer className="border-t border-black/[0.06] bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-[#1D1D1F] rounded flex items-center justify-center">
               <span className="text-white text-[10px] font-bold">V</span>

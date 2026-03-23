@@ -1,14 +1,17 @@
 import { SignIn } from "@clerk/nextjs"
+import Link from "next/link"
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-5 py-10">
       <div className="mb-8 text-center">
-        <div className="w-12 h-12 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <span className="text-white text-xl font-black">V</span>
-        </div>
-        <h1 className="text-2xl font-black text-gray-900">Welcome back</h1>
-        <p className="text-gray-500 mt-1">Sign in to your Viability First account</p>
+        <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <div className="w-9 h-9 bg-[#1D1D1F] rounded-xl flex items-center justify-center">
+            <span className="text-white text-sm font-bold">V</span>
+          </div>
+        </Link>
+        <h1 className="text-2xl font-bold text-[#1D1D1F] tracking-tight">Welcome back</h1>
+        <p className="text-[#6E6E73] mt-1.5 text-sm">Sign in to your Viability First account</p>
       </div>
       <SignIn forceRedirectUrl="/dashboard" />
     </div>

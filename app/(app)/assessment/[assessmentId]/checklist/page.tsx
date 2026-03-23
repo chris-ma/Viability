@@ -152,7 +152,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
   const activeKillFlags = scoringResult?.killFlags ?? []
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-8">
 
       {/* ── Project hero header ────────────────────────────────────────────── */}
       <div className="mb-8">

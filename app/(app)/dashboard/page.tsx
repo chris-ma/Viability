@@ -133,7 +133,7 @@ export default async function DashboardPage() {
   const inProgressCount = ideas.filter((i) => i.assessments[0] && !i.assessments[0].completedAt).length
 
   return (
-    <div className="max-w-5xl mx-auto px-5 sm:px-8 py-10">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="flex items-start justify-between mb-8 gap-4">
