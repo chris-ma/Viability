@@ -1,7 +1,7 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useAuth, SignInButton } from "@clerk/nextjs"
+import { useAuth } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -30,7 +30,7 @@ const EMPTY_FORM: FormData = {
   model: "",
 }
 
-export default function NewAssessmentPage() {
+function NewAssessmentForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isSignedIn, isLoaded } = useAuth()
@@ -308,5 +308,13 @@ export default function NewAssessmentPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function NewAssessmentPage() {
+  return (
+    <Suspense>
+      <NewAssessmentForm />
+    </Suspense>
   )
 }
