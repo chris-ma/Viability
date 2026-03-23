@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import "./globals.css";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-})
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,8 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`h-full antialiased ${playfair.variable} ${inter.variable}`}>
-        <body className="min-h-full flex flex-col" style={{ background: "var(--c-cream)", color: "var(--c-espresso)" }}>
+      <html lang="en" className={`h-full antialiased ${inter.variable}`}>
+        <body className="min-h-full flex flex-col bg-white text-[#1D1D1F]">
           {children}
           <Toaster richColors position="top-right" />
         </body>

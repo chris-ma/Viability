@@ -18,7 +18,7 @@ const ANSWER_OPTIONS: Array<{ value: AnswerValue; label: string; description: st
   { value: "yes",        label: "Yes",        description: "Fully confirmed",  color: "border-green-500 bg-green-50 text-green-800" },
   { value: "partially",  label: "Partially",  description: "Some evidence",    color: "border-amber-500 bg-amber-50 text-amber-800" },
   { value: "no",         label: "No",         description: "Not yet",          color: "border-red-500 bg-red-50 text-red-800" },
-  { value: "dont_know",  label: "Don't Know", description: "Unvalidated",      color: "border-[#F2D9C0] bg-[#FBF7F0] text-[#1C0F07]/65" },
+  { value: "dont_know",  label: "Don't Know", description: "Unvalidated",      color: "border-[#D2D2D7] bg-[#F5F5F7] text-[#6E6E73]" },
 ]
 
 function AnswerButton({
@@ -35,7 +35,7 @@ function AnswerButton({
       onClick={onClick}
       className={cn(
         "flex-1 min-w-0 rounded-xl border-2 px-3 py-2.5 text-center transition-all duration-150",
-        selected ? option.color : "border-[#F2D9C0] bg-white text-[#1C0F07]/70 hover:border-[#E8A44A]/50"
+        selected ? option.color : "border-[#D2D2D7] bg-white text-[#6E6E73] hover:border-[#AEAEB2]"
       )}
     >
       <div className="text-sm font-bold">{option.label}</div>
@@ -139,11 +139,11 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
     return (
       <div className="max-w-5xl mx-auto px-4 py-12">
         <div className="animate-pulse space-y-5">
-          <div className="h-6 bg-[#F2D9C0] rounded-full w-1/3 mx-auto" />
-          <div className="h-10 bg-[#F2D9C0] rounded-2xl w-2/3 mx-auto" />
-          <div className="h-2 bg-[#F2D9C0] rounded-full w-full" />
-          <div className="h-48 bg-[#F2D9C0]/50 rounded-2xl" />
-          <div className="h-48 bg-[#F2D9C0]/30 rounded-2xl" />
+          <div className="h-6 bg-[#E8E8ED] rounded-full w-1/3 mx-auto" />
+          <div className="h-10 bg-[#E8E8ED] rounded-2xl w-2/3 mx-auto" />
+          <div className="h-2 bg-[#E8E8ED] rounded-full w-full" />
+          <div className="h-48 bg-[#E8E8ED]/50 rounded-2xl" />
+          <div className="h-48 bg-[#E8E8ED]/30 rounded-2xl" />
         </div>
       </div>
     )
@@ -156,25 +156,25 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
 
       {/* ── Project hero header ────────────────────────────────────────────── */}
       <div className="mb-8">
-        <p className="text-xs font-semibold text-[#D4622A] uppercase tracking-widest mb-1">
+        <p className="text-xs font-semibold text-[#6E6E73] uppercase tracking-widest mb-1">
           Viability Assessment
         </p>
-        <h1 className="text-3xl font-black text-[#1C0F07] mb-4 truncate">
+        <h1 className="text-3xl font-black text-[#1D1D1F] mb-4 truncate">
           {assessmentTitle}
         </h1>
 
         {/* Overall progress bar */}
         <div className="flex items-center gap-4">
-          <div className="flex-1 h-2 bg-[#F2D9C0] rounded-full overflow-hidden">
+          <div className="flex-1 h-2 bg-[#E8E8ED] rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#1C0F07] rounded-full transition-all duration-500"
+              className="h-full bg-[#1D1D1F] rounded-full transition-all duration-500"
               style={{ width: `${completionPct}%` }}
             />
           </div>
-          <span className="text-sm font-semibold text-[#1C0F07] whitespace-nowrap">
+          <span className="text-sm font-semibold text-[#1D1D1F] whitespace-nowrap">
             {totalAnswered}/{totalItems}
           </span>
-          <span className="text-xs text-[#1C0F07]/40 whitespace-nowrap hidden sm:block">
+          <span className="text-xs text-[#1D1D1F]/40 whitespace-nowrap hidden sm:block">
             {completedDims}/{DIMENSIONS.length} sections
           </span>
         </div>
@@ -222,7 +222,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
               >
                 {/* Dimension header button */}
                 <button
-                  className="w-full px-5 py-4 flex items-center gap-4 text-left hover:bg-[#FBF7F0]/60 transition-colors"
+                  className="w-full px-5 py-4 flex items-center gap-4 text-left hover:bg-[#F5F5F7]/60 transition-colors"
                   onClick={() => setActiveDimension(isActive ? 0 : dimension.id)}
                 >
                   {/* Status dot */}
@@ -232,8 +232,8 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                       isComplete
                         ? "bg-green-100 text-green-700"
                         : answeredInDim > 0
-                        ? "bg-[#F2D9C0] text-[#D4622A]"
-                        : "bg-[#F2D9C0]/50 text-[#1C0F07]/40"
+                        ? "bg-[#E8E8ED] text-[#6E6E73]"
+                        : "bg-[#E8E8ED]/50 text-[#1D1D1F]/40"
                     )}
                   >
                     {isComplete ? <CheckCircle2 className="h-4 w-4" /> : dimension.id}
@@ -241,13 +241,13 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-[#1C0F07] text-sm">{dimension.name}</span>
+                      <span className="font-bold text-[#1D1D1F] text-sm">{dimension.name}</span>
                       {hasKillFlag && (
                         <Badge variant="red" className="text-xs shrink-0">Kill Flag</Badge>
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
-                      <span className="text-xs text-[#1C0F07]/55">
+                      <span className="text-xs text-[#1D1D1F]/55">
                         {answeredInDim}/{dimension.items.length} answered
                       </span>
                       {dimScore && answeredInDim > 0 && (
@@ -263,7 +263,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                           {Math.round(dimScore.rawScore)}%
                         </span>
                       )}
-                      <span className="text-xs text-[#1C0F07]/40 hidden sm:block">
+                      <span className="text-xs text-[#1D1D1F]/40 hidden sm:block">
                         Weight {Math.round(dimension.weight * 100)}%
                       </span>
                     </div>
@@ -271,23 +271,23 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
 
                   {/* Mini progress bar */}
                   {answeredInDim > 0 && !isComplete && (
-                    <div className="w-16 h-1 bg-[#F2D9C0] rounded-full overflow-hidden shrink-0 hidden sm:block">
+                    <div className="w-16 h-1 bg-[#E8E8ED] rounded-full overflow-hidden shrink-0 hidden sm:block">
                       <div
-                        className="h-full bg-[#D4622A] rounded-full"
+                        className="h-full bg-[#6E6E73] rounded-full"
                         style={{ width: `${(answeredInDim / dimension.items.length) * 100}%` }}
                       />
                     </div>
                   )}
 
                   {isActive
-                    ? <ChevronDown className="h-4 w-4 text-[#1C0F07]/40 shrink-0" />
-                    : <ChevronRight className="h-4 w-4 text-[#1C0F07]/40 shrink-0" />
+                    ? <ChevronDown className="h-4 w-4 text-[#1D1D1F]/40 shrink-0" />
+                    : <ChevronRight className="h-4 w-4 text-[#1D1D1F]/40 shrink-0" />
                   }
                 </button>
 
                 {/* Questions */}
                 {isActive && (
-                  <div className="border-t border-[#F2D9C0]/60">
+                  <div className="border-t border-[#E8E8ED]/60">
                     {dimension.items.map((item, idx) => {
                       const currentAnswer = dimAnswers[item.id]
                       const isSaving = saving === `${dimension.id}-${item.id}`
@@ -297,7 +297,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                           key={item.id}
                           className={cn(
                             "px-5 py-4",
-                            idx > 0 ? "border-t border-[#F2D9C0]/60" : "",
+                            idx > 0 ? "border-t border-[#E8E8ED]/60" : "",
                             item.isKillFlagItem ? "bg-red-50/30" : ""
                           )}
                         >
@@ -306,11 +306,11 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                               {item.isKillFlagItem && (
                                 <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
                               )}
-                              <p className="text-sm font-semibold text-[#1C0F07] leading-relaxed">
+                              <p className="text-sm font-semibold text-[#1D1D1F] leading-relaxed">
                                 {item.question}
                               </p>
                             </div>
-                            <p className="text-xs text-[#1C0F07]/55 mt-1 leading-relaxed ml-6">
+                            <p className="text-xs text-[#1D1D1F]/55 mt-1 leading-relaxed ml-6">
                               {item.helpText}
                             </p>
                           </div>
@@ -340,7 +340,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                           return nextDim ? (
                             <button
                               onClick={() => setActiveDimension(nextDim.id)}
-                              className="text-xs font-semibold text-[#D4622A] flex items-center gap-1 hover:underline"
+                              className="text-xs font-semibold text-[#6E6E73] flex items-center gap-1 hover:underline"
                             >
                               Next: {nextDim.shortName}
                               <ArrowRight className="h-3 w-3" />
@@ -357,9 +357,9 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
 
           {/* Submit card */}
           <div className="pt-2 pb-10">
-            <div className="rounded-2xl border-2 border-dashed border-[#F2D9C0] bg-[#FBF7F0] p-6 text-center">
-              <p className="font-bold text-[#1C0F07] mb-1 text-lg">Ready for your verdict?</p>
-              <p className="text-sm text-[#1C0F07]/55 mb-5">
+            <div className="rounded-2xl border-2 border-dashed border-[#E8E8ED] bg-[#F5F5F7] p-6 text-center">
+              <p className="font-bold text-[#1D1D1F] mb-1 text-lg">Ready for your verdict?</p>
+              <p className="text-sm text-[#1D1D1F]/55 mb-5">
                 {totalAnswered < totalItems
                   ? `${totalItems - totalAnswered} questions unanswered — you can still submit now.`
                   : "All questions answered. Submit to see your full Viability Score."}
@@ -378,7 +378,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                 )}
               </Button>
               {totalAnswered > 0 && (
-                <p className="text-xs text-[#1C0F07]/40 mt-3">
+                <p className="text-xs text-[#1D1D1F]/40 mt-3">
                   {Math.round(completionPct)}% complete · {totalAnswered} answers recorded
                 </p>
               )}
@@ -397,8 +397,8 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
             />
 
             {/* Section progress */}
-            <div className="bg-white rounded-2xl border border-[#F2D9C0] p-4">
-              <p className="text-xs font-semibold text-[#1C0F07]/55 uppercase tracking-wider mb-3">
+            <div className="bg-white rounded-2xl border border-[#E8E8ED] p-4">
+              <p className="text-xs font-semibold text-[#1D1D1F]/55 uppercase tracking-wider mb-3">
                 Sections
               </p>
               <div className="space-y-1">
@@ -413,18 +413,18 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                       className={cn(
                         "w-full flex items-center gap-2.5 text-left px-2 py-2 rounded-xl transition-colors",
                         activeDimension === dim.id
-                          ? "bg-[#F2D9C0]/60"
-                          : "hover:bg-[#F2D9C0]/40"
+                          ? "bg-[#E8E8ED]/60"
+                          : "hover:bg-[#E8E8ED]/40"
                       )}
                     >
                       <div
                         className={cn(
                           "w-2 h-2 rounded-full shrink-0",
-                          complete ? "bg-green-500" : started ? "bg-[#D4622A]" : "bg-[#F2D9C0]"
+                          complete ? "bg-green-500" : started ? "bg-[#6E6E73]" : "bg-[#E8E8ED]"
                         )}
                       />
-                      <span className="text-xs text-[#1C0F07]/70 truncate flex-1">{dim.shortName}</span>
-                      <span className="text-xs text-[#1C0F07]/40 shrink-0">
+                      <span className="text-xs text-[#1D1D1F]/70 truncate flex-1">{dim.shortName}</span>
+                      <span className="text-xs text-[#1D1D1F]/40 shrink-0">
                         {answered}/{dim.items.length}
                       </span>
                     </button>

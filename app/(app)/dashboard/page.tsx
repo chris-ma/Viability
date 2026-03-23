@@ -143,7 +143,7 @@ export default async function DashboardPage() {
         </div>
         {atLimit ? (
           <Link href="/settings">
-            <Button size="sm" className="gap-1.5 bg-[#D4622A] hover:bg-[#D4622A]/90">
+            <Button size="sm" className="gap-1.5 bg-[#1D1D1F] hover:bg-black">
               <Zap className="h-3.5 w-3.5" />
               Upgrade to continue
             </Button>
@@ -192,7 +192,7 @@ export default async function DashboardPage() {
           { label: "Total ideas",   value: totalIdeas,       icon: Lightbulb,      color: "text-[#6E6E73]" },
           { label: "Viable",        value: viableCount,      icon: TrendingUp,     color: "text-green-600" },
           { label: "Needs work",    value: needsWorkCount,   icon: AlertTriangle,  color: "text-amber-500" },
-          { label: "Fix-It done",   value: fixItDone,        icon: CheckCircle2,   color: "text-[#D4622A]" },
+          { label: "Fix-It done",   value: fixItDone,        icon: CheckCircle2,   color: "text-[#6E6E73]" },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="bg-white rounded-2xl ring-1 ring-black/[0.06] p-4">
             <Icon className={`h-4 w-4 ${color} mb-2`} />

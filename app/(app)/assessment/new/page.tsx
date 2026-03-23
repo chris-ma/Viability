@@ -106,18 +106,18 @@ function NewAssessmentForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF7F0]">
+    <div className="min-h-screen bg-white">
       <div className="max-w-xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
 
         {/* Hero */}
         <div className="mb-10 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-[#1C0F07] rounded-2xl mb-5">
-            <Sparkles className="h-6 w-6 text-[#E8A44A]" />
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-[#1D1D1F] rounded-2xl mb-5">
+            <Sparkles className="h-6 w-6 text-white" />
           </div>
-          <h1 className="text-4xl font-black text-[#1C0F07] mb-3">
+          <h1 className="text-4xl font-bold text-[#1D1D1F] tracking-tight mb-3">
             What are you building?
           </h1>
-          <p className="text-[#1C0F07]/55 text-base max-w-sm mx-auto">
+          <p className="text-[#6E6E73] text-base max-w-sm mx-auto">
             Tell us about your idea and we'll run it through 8 dimensions of viability.
           </p>
         </div>
@@ -127,8 +127,8 @@ function NewAssessmentForm() {
 
           {/* Project name */}
           <div>
-            <Label htmlFor="title" className="text-sm font-semibold text-[#1C0F07] mb-2 block">
-              Project name <span className="text-[#D4622A]">*</span>
+            <Label htmlFor="title" className="text-sm font-semibold text-[#1D1D1F] mb-2 block">
+              Project name <span className="text-[#AEAEB2]">*</span>
             </Label>
             <Input
               id="title"
@@ -143,8 +143,8 @@ function NewAssessmentForm() {
 
           {/* Problem */}
           <div>
-            <Label htmlFor="problem" className="text-sm font-semibold text-[#1C0F07] mb-2 block">
-              What problem does it solve? <span className="text-[#D4622A]">*</span>
+            <Label htmlFor="problem" className="text-sm font-semibold text-[#1D1D1F] mb-2 block">
+              What problem does it solve? <span className="text-[#AEAEB2]">*</span>
             </Label>
             <Textarea
               id="problem"
@@ -158,8 +158,8 @@ function NewAssessmentForm() {
 
           {/* Solution */}
           <div>
-            <Label htmlFor="solution" className="text-sm font-semibold text-[#1C0F07] mb-2 block">
-              How does your idea solve it? <span className="text-[#D4622A]">*</span>
+            <Label htmlFor="solution" className="text-sm font-semibold text-[#1D1D1F] mb-2 block">
+              How does your idea solve it? <span className="text-[#AEAEB2]">*</span>
             </Label>
             <Textarea
               id="solution"
@@ -174,8 +174,8 @@ function NewAssessmentForm() {
           {/* Industry + model side by side */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-sm font-semibold text-[#1C0F07] mb-2 block">
-                Industry <span className="text-[#D4622A]">*</span>
+              <Label className="text-sm font-semibold text-[#1D1D1F] mb-2 block">
+                Industry <span className="text-[#AEAEB2]">*</span>
               </Label>
               <Select value={form.industry} onValueChange={(v) => update("industry", v)}>
                 <SelectTrigger>
@@ -189,8 +189,8 @@ function NewAssessmentForm() {
               </Select>
             </div>
             <div>
-              <Label className="text-sm font-semibold text-[#1C0F07] mb-2 block">
-                Business model <span className="text-[#D4622A]">*</span>
+              <Label className="text-sm font-semibold text-[#1D1D1F] mb-2 block">
+                Business model <span className="text-[#AEAEB2]">*</span>
               </Label>
               <Select value={form.model} onValueChange={(v) => update("model", v)}>
                 <SelectTrigger>
@@ -220,7 +220,7 @@ function NewAssessmentForm() {
             {!loading && <ArrowRight className="h-4 w-4" />}
           </Button>
 
-          <p className="text-xs text-[#1C0F07]/40 text-center">
+          <p className="text-xs text-[#AEAEB2] text-center">
             ~20–25 minutes · 40+ questions · 8 viability dimensions
           </p>
         </div>

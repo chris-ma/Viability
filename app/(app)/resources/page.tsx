@@ -17,7 +17,7 @@ const RESOURCES = [
   {
     category: "Customer Discovery",
     icon: Users,
-    color: "text-[#D4622A]",
+    color: "text-[#6E6E73]",
     bg: "bg-blue-100",
     items: [
       {
@@ -200,7 +200,7 @@ const RESOURCES = [
     category: "Essential Reading",
     icon: BookOpen,
     color: "text-gray-600",
-    bg: "bg-[#F2D9C0]",
+    bg: "bg-[#E8E8ED]",
     items: [
       {
         title: "Zero to One — Peter Thiel",
@@ -240,12 +240,12 @@ export default function ResourcesPage() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-[#F2D9C0] rounded-xl flex items-center justify-center">
-            <BookOpen className="h-5 w-5 text-[#1C0F07]/80" />
+          <div className="w-10 h-10 bg-[#E8E8ED] rounded-xl flex items-center justify-center">
+            <BookOpen className="h-5 w-5 text-[#1D1D1F]/80" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-[#1C0F07]">Resources</h1>
-            <p className="text-[#1C0F07]/55 mt-0.5">Tools, frameworks, and reading for each viability dimension</p>
+            <h1 className="text-3xl font-black text-[#1D1D1F]">Resources</h1>
+            <p className="text-[#1D1D1F]/55 mt-0.5">Tools, frameworks, and reading for each viability dimension</p>
           </div>
         </div>
       </div>
@@ -259,20 +259,20 @@ export default function ResourcesPage() {
                 <div className={`w-8 h-8 ${section.bg} rounded-lg flex items-center justify-center`}>
                   <Icon className={`h-4 w-4 ${section.color}`} />
                 </div>
-                <h2 className="text-lg font-bold text-[#1C0F07]">{section.category}</h2>
+                <h2 className="text-lg font-bold text-[#1D1D1F]">{section.category}</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {section.items.map((item) => (
-                  <Card key={item.title} className="hover:shadow-md hover:border-[#E8A44A]/60 transition-all">
+                  <Card key={item.title} className="hover:shadow-md hover:ring-black/[0.10] transition-all">
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <h3 className="text-sm font-bold text-[#1C0F07] leading-tight">{item.title}</h3>
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${TYPE_COLORS[item.type] ?? "bg-[#F2D9C0] text-gray-600"}`}>
+                        <h3 className="text-sm font-bold text-[#1D1D1F] leading-tight">{item.title}</h3>
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${TYPE_COLORS[item.type] ?? "bg-[#E8E8ED] text-gray-600"}`}>
                           {item.type}
                         </span>
                       </div>
-                      <p className="text-xs text-[#1C0F07]/55 mb-3 leading-relaxed">{item.desc}</p>
-                      <div className="flex items-center gap-1 text-xs text-[#D4622A]">
+                      <p className="text-xs text-[#1D1D1F]/55 mb-3 leading-relaxed">{item.desc}</p>
+                      <div className="flex items-center gap-1 text-xs text-[#6E6E73]">
                         <ExternalLink className="h-3 w-3 shrink-0" />
                         <span>{item.url}</span>
                       </div>

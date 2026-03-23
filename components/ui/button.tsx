@@ -8,15 +8,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[#1C0F07] text-white hover:bg-[#1C0F07]/80 focus-visible:ring-[#1C0F07]",
+        default: "bg-[#1D1D1F] text-white hover:bg-black focus-visible:ring-[#1D1D1F]",
         destructive: "bg-red-500 text-white hover:bg-red-600 focus-visible:ring-red-500",
-        outline: "border-2 border-[#F2D9C0] bg-white hover:bg-[#FBF7F0] hover:border-[#E8A44A]/60 focus-visible:ring-[#1C0F07]",
-        secondary: "bg-[#F2D9C0] text-[#1C0F07] hover:bg-[#F2D9C0]/70 focus-visible:ring-[#E8A44A]",
-        ghost: "hover:bg-[#F2D9C0]/60 hover:text-[#1C0F07] focus-visible:ring-[#E8A44A]",
-        link: "text-[#1C0F07] underline-offset-4 hover:underline focus-visible:ring-[#1C0F07]",
+        outline: "border border-[#D2D2D7] bg-white hover:bg-[#F5F5F7] text-[#1D1D1F] focus-visible:ring-[#1D1D1F]",
+        secondary: "bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E8E8ED] focus-visible:ring-[#1D1D1F]",
+        ghost: "hover:bg-[#F5F5F7] text-[#6E6E73] hover:text-[#1D1D1F] focus-visible:ring-[#1D1D1F]",
+        link: "text-[#0071E3] underline-offset-4 hover:underline focus-visible:ring-[#0071E3]",
         green: "bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-600",
         amber: "bg-amber-500 text-white hover:bg-amber-600 focus-visible:ring-amber-500",
-        blue: "bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-600",
+        blue: "bg-[#0071E3] text-white hover:bg-[#0077ED] focus-visible:ring-[#0071E3]",
         red: "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600",
       },
       size: {

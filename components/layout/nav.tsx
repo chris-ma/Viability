@@ -105,7 +105,7 @@ export function AppNav() {
               className={cn(
                 "flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-medium transition-colors",
                 isNew
-                  ? "text-[#D4622A]"
+                  ? "text-[#1D1D1F]"
                   : active
                   ? "text-[#1D1D1F]"
                   : "text-[#AEAEB2]"

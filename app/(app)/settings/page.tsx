@@ -83,10 +83,10 @@ export default async function SettingsPage() {
   const avatarUrl = clerkUser?.imageUrl
 
   const stats = [
-    { label: "Ideas created", value: dbUser._count.ideas, icon: Lightbulb, color: "text-[#D4622A]", bg: "bg-[#F2D9C0]" },
-    { label: "Assessments done", value: completedAssessments, icon: BarChart3, color: "text-[#D4622A]", bg: "bg-[#F2D9C0]" },
+    { label: "Ideas created", value: dbUser._count.ideas, icon: Lightbulb, color: "text-[#6E6E73]", bg: "bg-[#E8E8ED]" },
+    { label: "Assessments done", value: completedAssessments, icon: BarChart3, color: "text-[#6E6E73]", bg: "bg-[#E8E8ED]" },
     { label: "Fix-It tasks done", value: fixItDone, icon: CheckSquare, color: "text-green-600", bg: "bg-green-100" },
-    { label: "Member since", value: formatDate(dbUser.createdAt), icon: Calendar, color: "text-[#1C0F07]/55", bg: "bg-[#F2D9C0]/60", wide: true },
+    { label: "Member since", value: formatDate(dbUser.createdAt), icon: Calendar, color: "text-[#1D1D1F]/55", bg: "bg-[#E8E8ED]/60", wide: true },
   ]
 
   return (
@@ -95,7 +95,7 @@ export default async function SettingsPage() {
       {/* ── Profile banner ─────────────────────────────────────────────────── */}
       <Card className="overflow-hidden">
         {/* Top gradient strip */}
-        <div className="h-24 bg-gradient-to-r from-[#1C0F07] via-[#D4622A] to-[#E8A44A]" />
+        <div className="h-20 bg-[#1D1D1F]" />
         <CardContent className="p-6 pt-0">
           <div className="flex items-end gap-5 -mt-10 mb-5">
             {/* Avatar */}
@@ -109,7 +109,7 @@ export default async function SettingsPage() {
                   className="rounded-2xl border-4 border-white shadow-md"
                 />
               ) : (
-                <div className="w-[72px] h-[72px] rounded-2xl border-4 border-white shadow-md bg-[#1C0F07] flex items-center justify-center">
+                <div className="w-[72px] h-[72px] rounded-2xl border-4 border-white shadow-md bg-[#1D1D1F] flex items-center justify-center">
                   <span className="text-2xl font-black text-white">
                     {displayName[0]?.toUpperCase() ?? "?"}
                   </span>
@@ -119,10 +119,10 @@ export default async function SettingsPage() {
             {/* Name + plan badge (pushed down from the gradient) */}
             <div className="pb-1 flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-black text-[#1C0F07] truncate">{displayName}</h2>
+                <h2 className="text-xl font-black text-[#1D1D1F] truncate">{displayName}</h2>
                 <Badge variant={plan.badge}>{plan.label}</Badge>
               </div>
-              <p className="text-sm text-[#1C0F07]/55 truncate">{email}</p>
+              <p className="text-sm text-[#1D1D1F]/55 truncate">{email}</p>
             </div>
             {/* Clerk profile button */}
             <div className="shrink-0 pb-1">
@@ -137,13 +137,13 @@ export default async function SettingsPage() {
               return (
                 <div
                   key={s.label}
-                  className="bg-[#FBF7F0] rounded-xl p-3 flex flex-col gap-1"
+                  className="bg-[#F5F5F7] rounded-xl p-3 flex flex-col gap-1"
                 >
                   <div className={`w-7 h-7 ${s.bg} rounded-lg flex items-center justify-center mb-0.5`}>
                     <Icon className={`h-3.5 w-3.5 ${s.color}`} />
                   </div>
-                  <p className="text-base font-black text-[#1C0F07] leading-none">{s.value}</p>
-                  <p className="text-xs text-[#1C0F07]/50 leading-tight">{s.label}</p>
+                  <p className="text-base font-black text-[#1D1D1F] leading-none">{s.value}</p>
+                  <p className="text-xs text-[#1D1D1F]/50 leading-tight">{s.label}</p>
                 </div>
               )
             })}
@@ -155,19 +155,19 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader className="pb-4">
           <CardTitle className="text-base flex items-center gap-2">
-            <CreditCard className="h-4 w-4 text-[#1C0F07]/55" />
+            <CreditCard className="h-4 w-4 text-[#1D1D1F]/55" />
             Plan &amp; Billing
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="font-bold text-[#1C0F07]">{plan.label}</p>
-              <p className="text-sm text-[#1C0F07]/55 mt-0.5">{plan.description}</p>
+              <p className="font-bold text-[#1D1D1F]">{plan.label}</p>
+              <p className="text-sm text-[#1D1D1F]/55 mt-0.5">{plan.description}</p>
               <ul className="mt-2 space-y-1">
                 {plan.features.map((f) => (
-                  <li key={f} className="text-xs text-[#1C0F07]/65 flex items-center gap-1.5">
-                    <span className="w-1 h-1 rounded-full bg-[#D4622A] shrink-0" />
+                  <li key={f} className="text-xs text-[#1D1D1F]/65 flex items-center gap-1.5">
+                    <span className="w-1 h-1 rounded-full bg-[#6E6E73] shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -179,17 +179,17 @@ export default async function SettingsPage() {
           {dbUser.planTier === "free" && (
             <>
               <Separator />
-              <div className="rounded-2xl border border-[#E8A44A]/40 bg-gradient-to-br from-[#FBF7F0] to-[#F2D9C0]/40 p-5">
+              <div className="rounded-2xl bg-[#1D1D1F] p-5">
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 bg-[#1C0F07] rounded-xl flex items-center justify-center shrink-0">
-                    <Sparkles className="h-4 w-4 text-[#E8A44A]" />
+                  <div className="w-9 h-9 bg-white/[0.1] rounded-xl flex items-center justify-center shrink-0">
+                    <Sparkles className="h-4 w-4 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-[#1C0F07] mb-0.5">Upgrade to Founder Pro — £9/month</p>
-                    <p className="text-xs text-[#1C0F07]/55 mb-3">
+                    <p className="font-bold text-white mb-0.5">Upgrade to Founder Pro — £9/month</p>
+                    <p className="text-xs text-white/50 mb-3">
                       Unlimited assessments, full Fix-It modules, PDF Viability Reports, and re-testing.
                     </p>
-                    <Button size="sm" className="gap-1.5">
+                    <Button size="sm" className="gap-1.5 bg-white text-[#1D1D1F] hover:bg-white/90">
                       Upgrade now
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
@@ -205,7 +205,7 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader className="pb-4">
           <CardTitle className="text-base flex items-center gap-2">
-            <Shield className="h-4 w-4 text-[#1C0F07]/55" />
+            <Shield className="h-4 w-4 text-[#1D1D1F]/55" />
             Account &amp; Security
           </CardTitle>
         </CardHeader>
@@ -230,12 +230,12 @@ export default async function SettingsPage() {
                 {i > 0 && <Separator />}
                 <div className="flex items-center justify-between py-4 gap-4">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 bg-[#F2D9C0] rounded-lg flex items-center justify-center shrink-0">
-                      <Icon className="h-4 w-4 text-[#1C0F07]/65" />
+                    <div className="w-8 h-8 bg-[#E8E8ED] rounded-lg flex items-center justify-center shrink-0">
+                      <Icon className="h-4 w-4 text-[#1D1D1F]/65" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-[#1C0F07]">{row.label}</p>
-                      <p className="text-xs text-[#1C0F07]/55 truncate">{row.sub}</p>
+                      <p className="text-sm font-semibold text-[#1D1D1F]">{row.label}</p>
+                      <p className="text-xs text-[#1D1D1F]/55 truncate">{row.sub}</p>
                     </div>
                   </div>
                   <div className="shrink-0">
@@ -252,7 +252,7 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader className="pb-4">
           <CardTitle className="text-base flex items-center gap-2">
-            <Database className="h-4 w-4 text-[#1C0F07]/55" />
+            <Database className="h-4 w-4 text-[#1D1D1F]/55" />
             Data &amp; Privacy
           </CardTitle>
         </CardHeader>
@@ -282,18 +282,18 @@ export default async function SettingsPage() {
                 {i > 0 && <Separator />}
                 <div className="flex items-start justify-between py-4 gap-4">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="w-8 h-8 bg-[#F2D9C0] rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                      <Icon className="h-4 w-4 text-[#1C0F07]/65" />
+                    <div className="w-8 h-8 bg-[#E8E8ED] rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                      <Icon className="h-4 w-4 text-[#1D1D1F]/65" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-[#1C0F07]">{row.label}</p>
-                      <p className="text-xs text-[#1C0F07]/55 leading-relaxed">{row.sub}</p>
+                      <p className="text-sm font-semibold text-[#1D1D1F]">{row.label}</p>
+                      <p className="text-xs text-[#1D1D1F]/55 leading-relaxed">{row.sub}</p>
                     </div>
                   </div>
                   {"action" in row && row.action && (
                     <a
                       href={row.action.href}
-                      className="shrink-0 text-xs font-semibold text-[#D4622A] hover:text-[#D4622A]/80 hover:underline whitespace-nowrap mt-0.5"
+                      className="shrink-0 text-xs font-semibold text-[#6E6E73] hover:text-[#6E6E73]/80 hover:underline whitespace-nowrap mt-0.5"
                     >
                       {row.action.label}
                     </a>
@@ -316,8 +316,8 @@ export default async function SettingsPage() {
         <CardContent>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-[#1C0F07]">Delete account</p>
-              <p className="text-xs text-[#1C0F07]/55 mt-0.5 max-w-xs">
+              <p className="text-sm font-semibold text-[#1D1D1F]">Delete account</p>
+              <p className="text-xs text-[#1D1D1F]/55 mt-0.5 max-w-xs">
                 Permanently delete your account and all associated ideas, assessments, and data. This cannot be undone.
               </p>
             </div>
