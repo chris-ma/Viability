@@ -10,7 +10,7 @@ export default function SignInPage() {
         <h1 className="text-2xl font-black text-gray-900">Welcome back</h1>
         <p className="text-gray-500 mt-1">Sign in to your Viability First account</p>
       </div>
-      <SignIn />
+      <SignIn forceRedirectUrl="/dashboard" />
     </div>
   )
 }

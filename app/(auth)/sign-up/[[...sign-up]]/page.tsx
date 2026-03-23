@@ -10,7 +10,7 @@ export default function SignUpPage() {
         <h1 className="text-2xl font-black text-gray-900">Create your account</h1>
         <p className="text-gray-500 mt-1">Get your first viability verdict free</p>
       </div>
-      <SignUp />
+      <SignUp forceRedirectUrl="/dashboard" />
     </div>
   )
 }
