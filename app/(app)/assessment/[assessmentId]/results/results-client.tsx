@@ -22,7 +22,9 @@ import {
   Wrench,
   Clock,
   ExternalLink,
+  Archive,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { formatDate } from "@/lib/utils"
 import { toast } from "sonner"
 
@@ -32,6 +34,7 @@ interface ResultsClientProps {
     overallScore: number
     verdict: "VIABLE" | "PROMISING" | "NEEDS_WORK" | "NOT_VIABLE"
     completedAt: string
+    previousScore?: number | null
     idea: {
       id: string
       title: string
@@ -49,6 +52,7 @@ interface ResultsClientProps {
   }
   dimensionScores: DimensionScore[]
   killFlags: KillFlag[]
+  previousScores?: Array<{ dimensionId: number; rawScore: number }> | null
 }
 
 const fadeUp = {
@@ -58,8 +62,10 @@ const fadeUp = {
   transition: { duration: 0.5, ease: "easeOut" as const },
 }
 
-export function ResultsClient({ assessment, dimensionScores, killFlags }: ResultsClientProps) {
+export function ResultsClient({ assessment, dimensionScores, killFlags, previousScores }: ResultsClientProps) {
   const [showKillFlow, setShowKillFlow] = useState(false)
+  const [archiving, setArchiving] = useState(false)
+  const router = useRouter()
   const verdictConfig = getVerdictConfig(assessment.verdict)
   const radarData = buildRadarData(dimensionScores)
 
@@ -74,6 +80,23 @@ export function ResultsClient({ assessment, dimensionScores, killFlags }: Result
   function handleShare() {
     navigator.clipboard.writeText(window.location.href)
     toast.success("Link copied to clipboard")
+  }
+
+  async function handleArchive(status: "archived" | "killed") {
+    setArchiving(true)
+    try {
+      const res = await fetch(`/api/ideas/${assessment.idea.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      })
+      if (!res.ok) throw new Error()
+      toast.success(status === "archived" ? "Idea archived. You can find it in My Ideas." : "Idea marked as killed.")
+      router.push("/dashboard")
+    } catch {
+      toast.error("Failed to update idea. Please try again.")
+      setArchiving(false)
+    }
   }
 
   return (
@@ -129,14 +152,28 @@ export function ResultsClient({ assessment, dimensionScores, killFlags }: Result
 
         <Card className="lg:col-span-2">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Viability Radar</CardTitle>
-            <p className="text-xs text-gray-400">Grey dashed = industry benchmark</p>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Viability Radar</CardTitle>
+              {previousScores && assessment.previousScore != null && (
+                <Badge variant="secondary" className="text-xs">
+                  {assessment.overallScore > assessment.previousScore
+                    ? `+${Math.round(assessment.overallScore - assessment.previousScore)} pts`
+                    : `${Math.round(assessment.overallScore - assessment.previousScore)} pts`}{" "}
+                  vs previous
+                </Badge>
+              )}
+            </div>
+            <p className="text-xs text-gray-400">
+              Grey dashed = industry benchmark
+              {previousScores && " · Purple dashed = previous assessment"}
+            </p>
           </CardHeader>
           <CardContent>
             <ViabilityRadarChart
               data={radarData}
               verdict={assessment.verdict}
               size="lg"
+              previousScores={previousScores ?? undefined}
             />
           </CardContent>
         </Card>
@@ -159,6 +196,7 @@ export function ResultsClient({ assessment, dimensionScores, killFlags }: Result
             <DimensionBars
               dimensionScores={dimensionScores}
               showFixItLinks={true}
+              previousScores={previousScores ?? undefined}
               onFixItClick={(dimId) => {
                 document.getElementById(`fixit-${dimId}`)?.scrollIntoView({ behavior: "smooth" })
               }}
@@ -281,9 +319,21 @@ export function ResultsClient({ assessment, dimensionScores, killFlags }: Result
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => toast.info("Idea archived. You can find it in My Ideas.")}
+                      onClick={() => handleArchive("archived")}
+                      disabled={archiving}
                     >
+                      <Archive className="h-4 w-4" />
                       Archive This Idea
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-200 text-red-600 hover:bg-red-50"
+                      onClick={() => handleArchive("killed")}
+                      disabled={archiving}
+                    >
+                      <XCircle className="h-4 w-4" />
+                      Kill This Idea
                     </Button>
                   </div>
                 </div>

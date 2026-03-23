@@ -22,6 +22,7 @@ interface ViabilityRadarChartProps {
   data: RadarDataPoint[]
   verdict: "VIABLE" | "PROMISING" | "NEEDS_WORK" | "NOT_VIABLE"
   size?: "sm" | "lg"
+  previousScores?: Array<{ dimensionId: number; rawScore: number }>
 }
 
 const VERDICT_COLORS = {
@@ -66,9 +67,22 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   return null
 }
 
-export function ViabilityRadarChart({ data, verdict, size = "lg" }: ViabilityRadarChartProps) {
+export function ViabilityRadarChart({ data, verdict, size = "lg", previousScores }: ViabilityRadarChartProps) {
   const color = VERDICT_COLORS[verdict]
   const height = size === "sm" ? 200 : 380
+
+  // Merge previous scores into radar data as a "previous" key
+  const chartData = previousScores
+    ? data.map((d) => {
+        const prev = previousScores.find((p) => {
+          // Match by position (dimensionId order matches data order)
+          const idx = data.indexOf(d)
+          return previousScores[idx] !== undefined
+        })
+        const idx = data.indexOf(d)
+        return { ...d, previous: Math.round(previousScores[idx]?.rawScore ?? 0) }
+      })
+    : data
 
   return (
     <motion.div
@@ -78,7 +92,7 @@ export function ViabilityRadarChart({ data, verdict, size = "lg" }: ViabilityRad
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <ResponsiveContainer width="100%" height={height}>
-        <RadarChart data={data} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
+        <RadarChart data={chartData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
           <PolarGrid stroke="#e5e7eb" />
           <PolarAngleAxis
             dataKey="dimension"
@@ -96,7 +110,20 @@ export function ViabilityRadarChart({ data, verdict, size = "lg" }: ViabilityRad
             strokeWidth={1}
             dot={false}
           />
-          {/* User scores */}
+          {/* Previous assessment overlay */}
+          {previousScores && (
+            <Radar
+              name="Previous Assessment"
+              dataKey="previous"
+              stroke="#a855f7"
+              fill="#a855f7"
+              fillOpacity={0.08}
+              strokeDasharray="5 3"
+              strokeWidth={1.5}
+              dot={false}
+            />
+          )}
+          {/* Current scores */}
           <Radar
             name="Your Score"
             dataKey="score"

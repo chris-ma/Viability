@@ -109,30 +109,16 @@ model ItemResponse {
   @@map("item_responses")
 }
 
-model FixItModule {
-  id             String          @id @default(cuid())
-  dimensionId    Int             @unique
-  title          String
-  description    String
-  estimatedHours String
-  tasks          Json
-  createdAt      DateTime        @default(now())
-  progress       FixItProgress[]
-
-  @@map("fix_it_modules")
-}
-
 model FixItProgress {
-  id          String      @id @default(cuid())
+  id          String    @id @default(cuid())
   userId      String
-  moduleId    String
+  dimensionId Int
   taskId      String
-  status      String      @default("pending")
+  completed   Boolean   @default(false)
   completedAt DateTime?
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  module      FixItModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, moduleId, taskId])
+  @@unique([userId, dimensionId, taskId])
   @@map("fix_it_progress")
 }
 

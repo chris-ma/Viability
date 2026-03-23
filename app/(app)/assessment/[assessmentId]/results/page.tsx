@@ -24,7 +24,18 @@ export default async function ResultsPage({
       idea: { userId: user.id },
     },
     include: {
-      idea: true,
+      idea: {
+        include: {
+          assessments: {
+            where: { completedAt: { not: null }, id: { not: assessmentId } },
+            orderBy: { completedAt: "desc" },
+            take: 1,
+            include: {
+              dimensionResults: { orderBy: { dimensionId: "asc" } },
+            },
+          },
+        },
+      },
       dimensionResults: {
         include: { itemResponses: true },
         orderBy: { dimensionId: "asc" },
@@ -46,11 +57,21 @@ export default async function ResultsPage({
 
   const scoringResult = calculateScores(allAnswers)
 
+  // Previous assessment comparison data (if any)
+  const prevAssessment = assessment.idea.assessments[0] ?? null
+  const previousScores = prevAssessment
+    ? prevAssessment.dimensionResults.map((dr) => ({
+        dimensionId: dr.dimensionId,
+        rawScore: dr.rawScore,
+      }))
+    : null
+
   const assessmentData = {
     id: assessment.id,
     overallScore: assessment.overallScore ?? scoringResult.overallScore,
     verdict: (assessment.verdict ?? scoringResult.verdict) as "VIABLE" | "PROMISING" | "NEEDS_WORK" | "NOT_VIABLE",
     completedAt: assessment.completedAt.toISOString(),
+    previousScore: prevAssessment?.overallScore ?? null,
     idea: {
       id: assessment.idea.id,
       title: assessment.idea.title,
@@ -72,6 +93,7 @@ export default async function ResultsPage({
       assessment={assessmentData}
       dimensionScores={scoringResult.dimensionScores}
       killFlags={scoringResult.killFlags}
+      previousScores={previousScores}
     />
   )
 }

@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { UserButton } from "@clerk/nextjs"
-import { LayoutDashboard, Lightbulb, Wrench, Plus } from "lucide-react"
+import { LayoutDashboard, Lightbulb, Wrench, Plus, BookOpen, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -10,6 +10,14 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/ideas", label: "My Ideas", icon: Lightbulb },
   { href: "/fix-it", label: "Fix-It Centre", icon: Wrench },
+  { href: "/resources", label: "Resources", icon: BookOpen },
+]
+
+const mobileNavItems = [
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/ideas", label: "Ideas", icon: Lightbulb },
+  { href: "/fix-it", label: "Fix-It", icon: Wrench },
+  { href: "/resources", label: "Resources", icon: BookOpen },
 ]
 
 export function AppNav() {
@@ -57,16 +65,29 @@ export function AppNav() {
               New Assessment
             </Button>
           </Link>
-          <div className="flex items-center gap-3 px-1">
-            <UserButton />
-            <span className="text-sm text-gray-600">Account</span>
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center gap-3">
+              <UserButton />
+              <span className="text-sm text-gray-600">Account</span>
+            </div>
+            <Link
+              href="/settings"
+              className={cn(
+                "p-1.5 rounded-lg transition-colors",
+                pathname.startsWith("/settings")
+                  ? "bg-gray-100 text-gray-900"
+                  : "text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+              )}
+            >
+              <Settings className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </aside>
 
       {/* Mobile bottom nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 flex">
-        {navItems.map((item) => {
+        {mobileNavItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname.startsWith(item.href)
           return (
