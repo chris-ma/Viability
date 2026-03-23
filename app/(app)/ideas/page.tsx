@@ -32,8 +32,8 @@ export default async function IdeasPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-black text-gray-900">My Ideas</h1>
-          <p className="text-gray-500 mt-1">All your business idea assessments</p>
+          <h1 className="text-3xl font-black text-[#1C0F07]">My Ideas</h1>
+          <p className="text-[#1C0F07]/55 mt-1">All your business idea assessments</p>
         </div>
         <Link href="/assessment/new">
           <Button>
@@ -46,9 +46,9 @@ export default async function IdeasPage() {
       {ideas.length === 0 ? (
         <Card>
           <CardContent className="py-16 text-center">
-            <Lightbulb className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No ideas yet</h3>
-            <p className="text-gray-500 mb-6">Start your first assessment to see your ideas here.</p>
+            <Lightbulb className="h-12 w-12 text-[#D4622A]/40 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-[#1C0F07] mb-2">No ideas yet</h3>
+            <p className="text-[#1C0F07]/55 mb-6">Start your first assessment to see your ideas here.</p>
             <Link href="/assessment/new">
               <Button>
                 <Plus className="h-4 w-4" />
@@ -70,17 +70,17 @@ export default async function IdeasPage() {
 
             return (
               <Link key={idea.id} href={href}>
-                <Card className="hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
+                <Card className="hover:shadow-md hover:border-[#E8A44A]/60 transition-all cursor-pointer">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
-                          <h2 className="font-bold text-gray-900">{idea.title}</h2>
+                          <h2 className="font-bold text-[#1C0F07]">{idea.title}</h2>
                           <Badge variant="secondary" className="text-xs">{idea.industry}</Badge>
                           <Badge variant="outline" className="text-xs">{idea.model}</Badge>
                         </div>
-                        <p className="text-sm text-gray-500 line-clamp-2 mb-3">{idea.problem}</p>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                        <p className="text-sm text-[#1C0F07]/55 line-clamp-2 mb-3">{idea.problem}</p>
+                        <div className="flex items-center gap-4 text-xs text-[#1C0F07]/40">
                           <span>Created {formatDate(idea.createdAt)}</span>
                           {latest && (
                             <span>{idea.assessments.length} assessment{idea.assessments.length !== 1 ? "s" : ""}</span>

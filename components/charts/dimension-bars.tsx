@@ -50,7 +50,7 @@ export function DimensionBars({ dimensionScores, showFixItLinks, onFixItClick, p
             return (
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <span className="text-sm font-medium text-gray-700 truncate">{dim.name}</span>
+                  <span className="text-sm font-medium text-[#1C0F07]/80 truncate">{dim.name}</span>
                   {dim.killFlag && (
                     <Badge variant="red" className="shrink-0 text-xs px-1.5 py-0.5">
                       KILL FLAG
@@ -66,11 +66,11 @@ export function DimensionBars({ dimensionScores, showFixItLinks, onFixItClick, p
                   <span className={`text-sm font-bold ${getBarTextColor(dim.rawScore)}`}>
                     {Math.round(dim.rawScore)}%
                   </span>
-                  <span className="text-xs text-gray-400">w:{Math.round(dim.weight * 100)}%</span>
+                  <span className="text-xs text-[#1C0F07]/40">w:{Math.round(dim.weight * 100)}%</span>
                   {showFixItLinks && dim.rawScore < 50 && onFixItClick && (
                     <button
                       onClick={() => onFixItClick(dim.dimensionId)}
-                      className="text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline whitespace-nowrap"
+                      className="text-xs font-medium text-[#D4622A] hover:text-[#D4622A]/80 hover:underline whitespace-nowrap"
                     >
                       Fix it →
                     </button>
@@ -79,7 +79,7 @@ export function DimensionBars({ dimensionScores, showFixItLinks, onFixItClick, p
               </div>
             )
           })()}
-          <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-2.5 bg-[#F2D9C0] rounded-full overflow-hidden">
             <motion.div
               className={`h-full rounded-full ${getBarColor(dim.rawScore)}`}
               initial={{ width: 0 }}

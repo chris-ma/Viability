@@ -26,13 +26,13 @@ export function AppNav() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 min-h-screen border-r border-gray-200 bg-white fixed left-0 top-0 z-40">
-        <div className="p-6 border-b border-gray-200">
+      <aside className="hidden lg:flex flex-col w-64 min-h-screen border-r border-[#F2D9C0] bg-[#FBF7F0] fixed left-0 top-0 z-40">
+        <div className="p-6 border-b border-[#F2D9C0]">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#1C0F07] rounded-lg flex items-center justify-center">
               <span className="text-white text-sm font-black">V</span>
             </div>
-            <span className="font-bold text-gray-900">Viability First</span>
+            <span className="font-bold text-[#1C0F07]">Viability First</span>
           </Link>
         </div>
 
@@ -47,8 +47,8 @@ export function AppNav() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
                   isActive
-                    ? "bg-gray-900 text-white"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    ? "bg-[#1C0F07] text-white"
+                    : "text-[#1C0F07]/65 hover:bg-[#F2D9C0]/60 hover:text-[#1C0F07]"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -58,7 +58,7 @@ export function AppNav() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-gray-200 space-y-3">
+        <div className="p-4 border-t border-[#F2D9C0] space-y-3">
           <Link href="/assessment/new">
             <Button className="w-full" size="sm">
               <Plus className="h-4 w-4" />
@@ -68,15 +68,15 @@ export function AppNav() {
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-3">
               <UserButton />
-              <span className="text-sm text-gray-600">Account</span>
+              <span className="text-sm text-[#1C0F07]/65">Account</span>
             </div>
             <Link
               href="/settings"
               className={cn(
                 "p-1.5 rounded-lg transition-colors",
                 pathname.startsWith("/settings")
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+                  ? "bg-[#F2D9C0] text-[#1C0F07]"
+                  : "text-[#1C0F07]/40 hover:text-[#1C0F07] hover:bg-[#F2D9C0]/60"
               )}
             >
               <Settings className="h-4 w-4" />
@@ -86,7 +86,7 @@ export function AppNav() {
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 flex">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#FBF7F0] border-t border-[#F2D9C0] z-40 flex">
         {mobileNavItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname.startsWith(item.href)
@@ -96,17 +96,17 @@ export function AppNav() {
               href={item.href}
               className={cn(
                 "flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors",
-                isActive ? "text-gray-900" : "text-gray-500"
+                isActive ? "text-[#1C0F07]" : "text-[#1C0F07]/50"
               )}
             >
-              <Icon className={cn("h-5 w-5", isActive ? "text-gray-900" : "text-gray-400")} />
+              <Icon className={cn("h-5 w-5", isActive ? "text-[#1C0F07]" : "text-[#1C0F07]/40")} />
               {item.label}
             </Link>
           )
         })}
         <Link
           href="/assessment/new"
-          className="flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium text-blue-600"
+          className="flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium text-[#D4622A]"
         >
           <Plus className="h-5 w-5" />
           New

@@ -68,26 +68,26 @@ export default async function FixItPage() {
             <Wrench className="h-5 w-5 text-amber-600" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-gray-900">Fix-It Centre</h1>
-            <p className="text-gray-500 mt-0.5">Action plans for your low-scoring dimensions</p>
+            <h1 className="text-3xl font-black text-[#1C0F07]">Fix-It Centre</h1>
+            <p className="text-[#1C0F07]/55 mt-0.5">Action plans for your low-scoring dimensions</p>
           </div>
         </div>
 
         {modules.length > 0 && (
-          <div className="bg-gray-50 rounded-2xl border border-gray-200 p-4 flex items-center gap-6">
+          <div className="bg-[#FBF7F0] rounded-2xl border border-[#F2D9C0] p-4 flex items-center gap-6">
             <div className="text-center">
-              <div className="text-2xl font-black text-gray-900">{completedTasks}</div>
-              <div className="text-xs text-gray-500">tasks done</div>
+              <div className="text-2xl font-black text-[#1C0F07]">{completedTasks}</div>
+              <div className="text-xs text-[#1C0F07]/55">tasks done</div>
             </div>
-            <div className="h-8 w-px bg-gray-200" />
+            <div className="h-8 w-px bg-[#F2D9C0]" />
             <div className="text-center">
-              <div className="text-2xl font-black text-gray-900">{totalTasks - completedTasks}</div>
-              <div className="text-xs text-gray-500">remaining</div>
+              <div className="text-2xl font-black text-[#1C0F07]">{totalTasks - completedTasks}</div>
+              <div className="text-xs text-[#1C0F07]/55">remaining</div>
             </div>
-            <div className="h-8 w-px bg-gray-200" />
+            <div className="h-8 w-px bg-[#F2D9C0]" />
             <div className="text-center">
-              <div className="text-2xl font-black text-gray-900">{modules.length}</div>
-              <div className="text-xs text-gray-500">active modules</div>
+              <div className="text-2xl font-black text-[#1C0F07]">{modules.length}</div>
+              <div className="text-xs text-[#1C0F07]/55">active modules</div>
             </div>
           </div>
         )}
@@ -97,8 +97,8 @@ export default async function FixItPage() {
         <Card>
           <CardContent className="py-16 text-center">
             <CheckCircle2 className="h-12 w-12 text-green-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No active Fix-It modules</h3>
-            <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+            <h3 className="text-xl font-bold text-[#1C0F07] mb-2">No active Fix-It modules</h3>
+            <p className="text-[#1C0F07]/55 mb-6 max-w-sm mx-auto">
               Either all your dimensions score above 50%, or you haven't completed an assessment yet.
             </p>
             <Link href="/assessment/new">

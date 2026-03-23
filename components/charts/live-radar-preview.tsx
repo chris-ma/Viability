@@ -39,21 +39,21 @@ export function LiveRadarPreview({ scoringResult, completionPercentage }: LiveRa
   })
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-4">
+    <div className="bg-[#FBF7F0] rounded-2xl border border-[#F2D9C0] p-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <span className="text-xs font-semibold text-[#1C0F07]/55 uppercase tracking-wider">
           Live Preview
         </span>
-        <span className="text-xs font-bold text-gray-900">
+        <span className="text-xs font-bold text-[#1C0F07]">
           {Math.round(completionPercentage)}% complete
         </span>
       </div>
 
       {/* Completion ring indicator */}
       <div className="mb-3">
-        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-[#F2D9C0] rounded-full overflow-hidden">
           <div
-            className="h-full bg-gray-900 rounded-full transition-all duration-500"
+            className="h-full bg-[#1C0F07] rounded-full transition-all duration-500"
             style={{ width: `${completionPercentage}%` }}
           />
         </div>
@@ -79,8 +79,8 @@ export function LiveRadarPreview({ scoringResult, completionPercentage }: LiveRa
 
       {scoringResult && (
         <div className="mt-2 text-center">
-          <span className="text-xs text-gray-500">Current score: </span>
-          <span className="text-xs font-bold text-gray-900">
+          <span className="text-xs text-[#1C0F07]/55">Current score: </span>
+          <span className="text-xs font-bold text-[#1C0F07]">
             {scoringResult.overallScore}
           </span>
         </div>

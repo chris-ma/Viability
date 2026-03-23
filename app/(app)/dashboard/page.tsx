@@ -75,8 +75,8 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-black text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-1">Your idea viability workspace</p>
+          <h1 className="text-3xl font-black text-[#1C0F07]">Dashboard</h1>
+          <p className="text-[#1C0F07]/55 mt-1">Your idea viability workspace</p>
         </div>
         <Link href="/assessment/new">
           <Button>
@@ -89,8 +89,8 @@ export default async function DashboardPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total Ideas", value: activeIdeas.length, icon: Lightbulb, color: "text-gray-600", bg: "bg-gray-100" },
-          { label: "Assessed", value: completedAssessments.length, icon: BarChart3, color: "text-blue-600", bg: "bg-blue-100" },
+          { label: "Total Ideas", value: activeIdeas.length, icon: Lightbulb, color: "text-[#1C0F07]/65", bg: "bg-[#F2D9C0]" },
+          { label: "Assessed", value: completedAssessments.length, icon: BarChart3, color: "text-[#D4622A]", bg: "bg-[#F2D9C0]" },
           { label: "Viable", value: viableCount, icon: TrendingUp, color: "text-green-600", bg: "bg-green-100" },
           { label: "Need Work", value: needsWorkCount, icon: AlertTriangle, color: "text-amber-600", bg: "bg-amber-100" },
         ].map((stat) => {
@@ -103,8 +103,8 @@ export default async function DashboardPage() {
                     <Icon className={`h-5 w-5 ${stat.color}`} />
                   </div>
                 </div>
-                <p className="text-2xl font-black text-gray-900">{stat.value}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{stat.label}</p>
+                <p className="text-2xl font-black text-[#1C0F07]">{stat.value}</p>
+                <p className="text-xs text-[#1C0F07]/55 mt-0.5">{stat.label}</p>
               </CardContent>
             </Card>
           )
@@ -122,7 +122,7 @@ export default async function DashboardPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-sm font-bold text-gray-900">Fix-It Progress</p>
+                    <p className="text-sm font-bold text-[#1C0F07]">Fix-It Progress</p>
                     <span className="text-xs text-gray-500">{doneFixItTasks}/{totalFixItTasks} tasks</span>
                   </div>
                   <Progress value={(doneFixItTasks / totalFixItTasks) * 100} className="h-2" />
@@ -143,11 +143,11 @@ export default async function DashboardPage() {
       {activeIdeas.length === 0 ? (
         <Card>
           <CardContent className="py-16 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Lightbulb className="h-8 w-8 text-gray-400" />
+            <div className="w-16 h-16 bg-[#F2D9C0] rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Lightbulb className="h-8 w-8 text-[#D4622A]/60" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No ideas yet</h3>
-            <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+            <h3 className="text-xl font-bold text-[#1C0F07] mb-2">No ideas yet</h3>
+            <p className="text-[#1C0F07]/55 mb-6 max-w-sm mx-auto">
               Start your first viability assessment. It takes less than 30 minutes and could save you months of wasted effort.
             </p>
             <Link href="/assessment/new">
@@ -160,7 +160,7 @@ export default async function DashboardPage() {
         </Card>
       ) : (
         <div>
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Ideas</h2>
+          <h2 className="text-lg font-bold text-[#1C0F07] mb-4">Recent Ideas</h2>
           <div className="space-y-3">
             {activeIdeas.slice(0, 8).map((idea) => {
               const latestAssessment = idea.assessments[0]
@@ -180,12 +180,12 @@ export default async function DashboardPage() {
                       : `/assessment/new`
                   }
                 >
-                  <Card className="hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer">
+                  <Card className="hover:border-[#E8A44A]/60 hover:shadow-sm transition-all cursor-pointer">
                     <CardContent className="p-5">
                       <div className="flex items-center justify-between gap-4">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <h3 className="font-bold text-gray-900 truncate">{idea.title}</h3>
+                            <h3 className="font-bold text-[#1C0F07] truncate">{idea.title}</h3>
                             <Badge variant="secondary" className="shrink-0 text-xs">{idea.industry}</Badge>
                             {weakCount > 0 && (
                               <Badge variant="amber" className="shrink-0 text-xs">
@@ -193,8 +193,8 @@ export default async function DashboardPage() {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-gray-500 line-clamp-1">{idea.problem}</p>
-                          <p className="text-xs text-gray-400 mt-1">Updated {formatDate(idea.updatedAt)}</p>
+                          <p className="text-sm text-[#1C0F07]/55 line-clamp-1">{idea.problem}</p>
+                          <p className="text-xs text-[#1C0F07]/40 mt-1">Updated {formatDate(idea.updatedAt)}</p>
                         </div>
                         <div className="text-right shrink-0">
                           {latestAssessment?.completedAt && latestAssessment.overallScore !== null ? (

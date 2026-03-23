@@ -52,9 +52,9 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   if (active && payload && payload.length) {
     const data = payload[0].payload
     return (
-      <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-xs">
-        <p className="font-bold text-gray-900 mb-1">{data.dimension}</p>
-        <p className="text-gray-600">Score: <span className="font-semibold" style={{ color: getScoreColor(data.score) }}>{Math.round(data.score)}/100</span></p>
+      <div className="bg-white border border-[#F2D9C0] rounded-xl shadow-lg p-3 text-xs">
+        <p className="font-bold text-[#1C0F07] mb-1">{data.dimension}</p>
+        <p className="text-[#1C0F07]/65">Score:<span className="font-semibold" style={{ color: getScoreColor(data.score) }}>{Math.round(data.score)}/100</span></p>
         {data.killFlag && (
           <div className="flex items-center gap-1 text-red-500 font-semibold mt-1">
             <AlertTriangle className="h-3 w-3" />

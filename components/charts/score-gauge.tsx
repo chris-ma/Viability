@@ -88,18 +88,18 @@ export function ScoreGauge({ score, verdict }: ScoreGaugeProps) {
               y1={150}
               x2={240}
               y2={150}
-              stroke="#1f2937"
+              stroke="#1C0F07"
               strokeWidth={3}
               strokeLinecap="round"
             />
-            <circle cx={150} cy={150} r={6} fill="#1f2937" />
+            <circle cx={150} cy={150} r={6} fill="#1C0F07" />
           </g>
         </svg>
       </div>
 
       {/* Score display */}
       <div className="text-center -mt-4">
-        <div className="text-6xl font-black text-gray-900">{Math.round(score)}</div>
+        <div className="text-6xl font-black text-[#1C0F07]">{Math.round(score)}</div>
         <div className={`text-lg font-bold mt-1 ${config.textColor}`}>{config.label}</div>
       </div>
     </motion.div>

@@ -101,25 +101,25 @@ export function FixItClient({ modules }: { modules: ActiveModule[] }) {
                       <Badge variant={allDone ? "green" : "amber"} className="text-xs">
                         {allDone ? "Complete" : "Fix-It"}
                       </Badge>
-                      <span className="text-xs text-gray-400 truncate">{item.ideaTitle}</span>
+                      <span className="text-xs text-[#1C0F07]/40 truncate">{item.ideaTitle}</span>
                     </div>
                     <CardTitle className="text-lg">{module.title}</CardTitle>
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-1">
+                    <div className="flex items-center gap-1.5 text-xs text-[#1C0F07]/55 mt-1">
                       <Clock className="h-3 w-3" />
                       <span>{module.estimatedTime}</span>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
                     <div className="text-2xl font-black text-red-500">{Math.round(item.rawScore)}%</div>
-                    <div className="text-xs text-gray-400">current score</div>
+                    <div className="text-xs text-[#1C0F07]/40">current score</div>
                   </div>
                 </div>
 
                 {/* Progress bar */}
                 <div className="mt-3">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs text-gray-500">{doneCount}/{totalCount} tasks done</span>
-                    <span className="text-xs font-semibold text-gray-700">{pct}%</span>
+                    <span className="text-xs text-[#1C0F07]/55">{doneCount}/{totalCount} tasks done</span>
+                    <span className="text-xs font-semibold text-[#1C0F07]/80">{pct}%</span>
                   </div>
                   <Progress value={pct} className="h-1.5" />
                 </div>
@@ -137,7 +137,7 @@ export function FixItClient({ modules }: { modules: ActiveModule[] }) {
                         className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-150 ${
                           done
                             ? "bg-green-50 border-green-200"
-                            : "bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50"
+                            : "bg-white border-[#F2D9C0]/60 hover:border-[#E8A44A]/40 hover:bg-[#FBF7F0]"
                         }`}
                         onClick={() => toggleTask(item.dimensionId, task.id)}
                       >
@@ -149,16 +149,16 @@ export function FixItClient({ modules }: { modules: ActiveModule[] }) {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-semibold ${done ? "line-through text-gray-400" : "text-gray-900"}`}>
+                          <p className={`text-sm font-semibold ${done ? "line-through text-[#1C0F07]/40" : "text-[#1C0F07]"}`}>
                             {task.title}
                           </p>
                           {!done && (
-                            <p className="text-xs text-gray-500 mt-0.5">{task.description}</p>
+                            <p className="text-xs text-[#1C0F07]/55 mt-0.5">{task.description}</p>
                           )}
                           {task.resource && !done && (
                             <div className="flex items-center gap-1 mt-1">
                               <ExternalLink className="h-3 w-3 text-blue-500 shrink-0" />
-                              <span className="text-xs text-blue-600">{task.resource}</span>
+                              <span className="text-xs text-[#D4622A]">{task.resource}</span>
                             </div>
                           )}
                         </div>

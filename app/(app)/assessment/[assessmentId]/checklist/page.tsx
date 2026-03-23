@@ -36,7 +36,7 @@ function AnswerButton({
       onClick={onClick}
       className={cn(
         "flex-1 min-w-0 rounded-xl border-2 px-3 py-2.5 text-center transition-all duration-150",
-        selected ? option.color : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+        selected ? option.color : "border-[#F2D9C0] bg-white text-[#1C0F07]/70 hover:border-[#E8A44A]/50"
       )}
     >
       <div className="text-sm font-bold">{option.label}</div>
@@ -141,9 +141,9 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
     return (
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3" />
-          <div className="h-4 bg-gray-100 rounded w-full" />
-          <div className="h-64 bg-gray-100 rounded-2xl" />
+          <div className="h-8 bg-[#F2D9C0] rounded w-1/3" />
+          <div className="h-4 bg-[#FBF7F0] rounded w-full" />
+          <div className="h-64 bg-[#FBF7F0] rounded-2xl" />
         </div>
       </div>
     )
@@ -156,11 +156,11 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
-          <h1 className="text-2xl font-black text-gray-900 truncate">{assessmentTitle}</h1>
+          <h1 className="text-2xl font-black text-[#1C0F07] truncate">{assessmentTitle}</h1>
         </div>
         <div className="flex items-center gap-4">
           <Progress value={completionPct} className="flex-1 max-w-xs" />
-          <span className="text-sm font-medium text-gray-600">
+          <span className="text-sm font-medium text-[#1C0F07]/65">
             {totalAnswered}/{totalItems} answered
           </span>
         </div>
@@ -210,8 +210,8 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                       isComplete
                         ? "bg-green-100 text-green-700"
                         : answeredInDim > 0
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-gray-100 text-gray-500"
+                        ? "bg-[#F2D9C0] text-[#D4622A]"
+                        : "bg-[#F2D9C0]/50 text-[#1C0F07]/55"
                     )}
                   >
                     {isComplete ? <CheckCircle2 className="h-4 w-4" /> : dimension.id}
@@ -219,16 +219,16 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-gray-900 text-sm">{dimension.name}</span>
+                      <span className="font-bold text-[#1C0F07] text-sm">{dimension.name}</span>
                       {hasKillFlag && (
                         <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-[#1C0F07]/55">
                         {answeredInDim}/{dimension.items.length} answered
                       </span>
-                      <span className="text-xs text-gray-400">Weight: {Math.round(dimension.weight * 100)}%</span>
+                      <span className="text-xs text-[#1C0F07]/40">Weight: {Math.round(dimension.weight * 100)}%</span>
                       {dimScore && answeredInDim > 0 && (
                         <span
                           className="text-xs font-bold"
@@ -248,15 +248,15 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                   </div>
 
                   {isActive ? (
-                    <ChevronDown className="h-4 w-4 text-gray-400 shrink-0" />
+                    <ChevronDown className="h-4 w-4 text-[#1C0F07]/40 shrink-0" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
+                    <ChevronRight className="h-4 w-4 text-[#1C0F07]/40 shrink-0" />
                   )}
                 </button>
 
                 {/* Items */}
                 {isActive && (
-                  <div className="border-t border-gray-100">
+                  <div className="border-t border-[#F2D9C0]/60">
                     {dimension.items.map((item, idx) => {
                       const currentAnswer = dimAnswers[item.id]
                       const isSaving = saving === `${dimension.id}-${item.id}`
@@ -266,7 +266,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                           key={item.id}
                           className={cn(
                             "p-5",
-                            idx > 0 ? "border-t border-gray-100" : "",
+                            idx > 0 ? "border-t border-[#F2D9C0]/60" : "",
                             item.isKillFlagItem ? "bg-red-50/30" : ""
                           )}
                         >
@@ -275,9 +275,9 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                               {item.isKillFlagItem && (
                                 <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
                               )}
-                              <p className="text-sm font-semibold text-gray-900">{item.question}</p>
+                              <p className="text-sm font-semibold text-[#1C0F07]">{item.question}</p>
                             </div>
-                            <p className="text-xs text-gray-500 mt-1 ml-6">{item.helpText}</p>
+                            <p className="text-xs text-[#1C0F07]/55 mt-1 ml-6">{item.helpText}</p>
                           </div>
                           <div className={cn("flex gap-2", isSaving ? "opacity-60" : "")}>
                             {ANSWER_OPTIONS.map((option) => (
@@ -300,10 +300,10 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
 
           {/* Submit */}
           <div className="mt-6 pb-8">
-            <Card className="border-2 border-dashed border-gray-200">
+            <Card className="border-2 border-dashed border-[#F2D9C0]">
               <CardContent className="p-6 text-center">
-                <h3 className="font-bold text-gray-900 mb-2">Ready to get your verdict?</h3>
-                <p className="text-sm text-gray-500 mb-4">
+                <h3 className="font-bold text-[#1C0F07] mb-2">Ready to get your verdict?</h3>
+                <p className="text-sm text-[#1C0F07]/55 mb-4">
                   {totalAnswered < totalItems
                     ? `You have ${totalItems - totalAnswered} unanswered questions. You can still submit.`
                     : "All questions answered. Submit to see your full Viability Score."}
@@ -339,7 +339,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
             {/* Dimension status */}
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Progress</p>
+                <p className="text-xs font-semibold text-[#1C0F07]/55 uppercase tracking-wider mb-3">Progress</p>
                 <div className="space-y-2">
                   {DIMENSIONS.map((dim) => {
                     const answered = Object.keys(allAnswers[dim.id] ?? {}).length
@@ -349,16 +349,16 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                       <button
                         key={dim.id}
                         onClick={() => setActiveDimension(dim.id)}
-                        className="w-full flex items-center gap-2 text-left hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors"
+                        className="w-full flex items-center gap-2 text-left hover:bg-[#F2D9C0]/40 rounded-lg px-2 py-1.5 transition-colors"
                       >
                         <div
                           className={cn(
                             "w-2 h-2 rounded-full shrink-0",
-                            complete ? "bg-green-500" : started ? "bg-blue-400" : "bg-gray-200"
+                            complete ? "bg-green-500" : started ? "bg-[#D4622A]" : "bg-[#F2D9C0]"
                           )}
                         />
-                        <span className="text-xs text-gray-600 truncate">{dim.shortName}</span>
-                        <span className="text-xs text-gray-400 ml-auto shrink-0">
+                        <span className="text-xs text-[#1C0F07]/65 truncate">{dim.shortName}</span>
+                        <span className="text-xs text-[#1C0F07]/40 ml-auto shrink-0">
                           {answered}/{dim.items.length}
                         </span>
                       </button>

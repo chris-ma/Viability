@@ -116,10 +116,10 @@ function NewAssessmentForm() {
           <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
             <Lightbulb className="h-4 w-4 text-white" />
           </div>
-          <span className="text-sm font-semibold text-gray-500">New Assessment</span>
+          <span className="text-sm font-semibold text-[#1C0F07]/55">New Assessment</span>
         </div>
-        <h1 className="text-3xl font-black text-gray-900 mb-2">Describe your idea</h1>
-        <p className="text-gray-500">
+        <h1 className="text-3xl font-black text-[#1C0F07] mb-2">Describe your idea</h1>
+        <p className="text-[#1C0F07]/55">
           Tell us about your business idea. Be honest — the more accurate your answers, the more useful your viability verdict.
         </p>
       </div>
@@ -134,15 +134,15 @@ function NewAssessmentForm() {
                   ? "bg-green-500 text-white"
                   : s === step
                   ? "bg-gray-900 text-white"
-                  : "bg-gray-100 text-gray-400"
+                  : "bg-[#F2D9C0]/50 text-[#1C0F07]/40"
               }`}
             >
               {s < step ? "✓" : s}
             </div>
-            {s < 3 && <div className={`h-0.5 w-8 ${s < step ? "bg-green-500" : "bg-gray-200"}`} />}
+            {s < 3 && <div className={`h-0.5 w-8 ${s < step ? "bg-green-500" : "bg-[#F2D9C0]"}`} />}
           </div>
         ))}
-        <span className="ml-2 text-xs text-gray-500">
+        <span className="ml-2 text-xs text-[#1C0F07]/55">
           {step === 1 ? "Idea basics" : step === 2 ? "Problem & solution" : "Classification"}
         </span>
       </div>
@@ -152,7 +152,7 @@ function NewAssessmentForm() {
           {step === 1 && (
             <div className="space-y-5 animate-fade-in">
               <div>
-                <Label htmlFor="title" className="text-sm font-semibold text-gray-700 mb-2 block">
+                <Label htmlFor="title" className="text-sm font-semibold text-[#1C0F07]/80 mb-2 block">
                   What's your idea called? *
                 </Label>
                 <Input
@@ -162,7 +162,7 @@ function NewAssessmentForm() {
                   onChange={(e) => updateForm("title", e.target.value)}
                   maxLength={80}
                 />
-                <p className="text-xs text-gray-400 mt-1">{form.title.length}/80 characters</p>
+                <p className="text-xs text-[#1C0F07]/40 mt-1">{form.title.length}/80 characters</p>
               </div>
 
               <Button
@@ -180,7 +180,7 @@ function NewAssessmentForm() {
           {step === 2 && (
             <div className="space-y-5 animate-fade-in">
               <div>
-                <Label htmlFor="problem" className="text-sm font-semibold text-gray-700 mb-2 block">
+                <Label htmlFor="problem" className="text-sm font-semibold text-[#1C0F07]/80 mb-2 block">
                   What problem does this solve? *
                 </Label>
                 <Textarea
@@ -191,11 +191,11 @@ function NewAssessmentForm() {
                   maxLength={400}
                   className="min-h-[100px]"
                 />
-                <p className="text-xs text-gray-400 mt-1">{form.problem.length}/400 characters</p>
+                <p className="text-xs text-[#1C0F07]/40 mt-1">{form.problem.length}/400 characters</p>
               </div>
 
               <div>
-                <Label htmlFor="solution" className="text-sm font-semibold text-gray-700 mb-2 block">
+                <Label htmlFor="solution" className="text-sm font-semibold text-[#1C0F07]/80 mb-2 block">
                   How does your idea solve it? *
                 </Label>
                 <Textarea
@@ -206,7 +206,7 @@ function NewAssessmentForm() {
                   maxLength={400}
                   className="min-h-[100px]"
                 />
-                <p className="text-xs text-gray-400 mt-1">{form.solution.length}/400 characters</p>
+                <p className="text-xs text-[#1C0F07]/40 mt-1">{form.solution.length}/400 characters</p>
               </div>
 
               <div className="flex gap-3">
@@ -229,7 +229,7 @@ function NewAssessmentForm() {
           {step === 3 && (
             <div className="space-y-5 animate-fade-in">
               <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <Label className="text-sm font-semibold text-[#1C0F07]/80 mb-2 block">
                   Industry *
                 </Label>
                 <Select
@@ -248,7 +248,7 @@ function NewAssessmentForm() {
               </div>
 
               <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <Label className="text-sm font-semibold text-[#1C0F07]/80 mb-2 block">
                   Business Model *
                 </Label>
                 <Select
@@ -266,10 +266,10 @@ function NewAssessmentForm() {
                 </Select>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Summary</p>
-                <p className="text-sm font-bold text-gray-900">{form.title}</p>
-                <p className="text-xs text-gray-500 line-clamp-2">{form.problem}</p>
+              <div className="bg-[#FBF7F0] rounded-xl p-4 space-y-2">
+                <p className="text-xs font-semibold text-[#1C0F07]/55 uppercase tracking-wider">Summary</p>
+                <p className="text-sm font-bold text-[#1C0F07]">{form.title}</p>
+                <p className="text-xs text-[#1C0F07]/55 line-clamp-2">{form.problem}</p>
               </div>
 
               {isLoaded && !isSignedIn && (
@@ -300,7 +300,7 @@ function NewAssessmentForm() {
                 </Button>
               </div>
 
-              <p className="text-xs text-gray-400 text-center">
+              <p className="text-xs text-[#1C0F07]/40 text-center">
                 ~20–25 minutes · 40+ questions · 8 dimensions
               </p>
             </div>
