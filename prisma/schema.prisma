@@ -1,0 +1,149 @@
+// Viability First - Prisma Schema
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PlanTier {
+  free
+  pro
+  studio
+}
+
+enum IdeaStatus {
+  draft
+  active
+  complete
+  archived
+  killed
+}
+
+enum Verdict {
+  VIABLE
+  PROMISING
+  NEEDS_WORK
+  NOT_VIABLE
+}
+
+enum AnswerValue {
+  yes
+  partially
+  no
+  dont_know
+}
+
+model User {
+  id            String          @id @default(cuid())
+  clerkId       String          @unique
+  email         String          @unique
+  name          String?
+  planTier      PlanTier        @default(free)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  ideas         Idea[]
+  fixItProgress FixItProgress[]
+
+  @@map("users")
+}
+
+model Idea {
+  id          String       @id @default(cuid())
+  userId      String
+  title       String
+  problem     String
+  solution    String
+  industry    String
+  model       String
+  status      IdeaStatus   @default(draft)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assessments Assessment[]
+
+  @@map("ideas")
+}
+
+model Assessment {
+  id               String            @id @default(cuid())
+  ideaId           String
+  startedAt        DateTime          @default(now())
+  completedAt      DateTime?
+  overallScore     Float?
+  verdict          Verdict?
+  reportUrl        String?
+  idea             Idea              @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  dimensionResults DimensionResult[]
+  shareTokens      ShareToken[]
+
+  @@map("assessments")
+}
+
+model DimensionResult {
+  id            String         @id @default(cuid())
+  assessmentId  String
+  dimensionId   Int
+  rawScore      Float          @default(0)
+  weightedScore Float          @default(0)
+  killFlag      Boolean        @default(false)
+  assessment    Assessment     @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  itemResponses ItemResponse[]
+
+  @@unique([assessmentId, dimensionId])
+  @@map("dimension_results")
+}
+
+model ItemResponse {
+  id              String          @id @default(cuid())
+  dimensionResultId String
+  itemId          String
+  answer          AnswerValue
+  answeredAt      DateTime        @default(now())
+  dimensionResult DimensionResult @relation(fields: [dimensionResultId], references: [id], onDelete: Cascade)
+
+  @@unique([dimensionResultId, itemId])
+  @@map("item_responses")
+}
+
+model FixItModule {
+  id             String          @id @default(cuid())
+  dimensionId    Int             @unique
+  title          String
+  description    String
+  estimatedHours String
+  tasks          Json
+  createdAt      DateTime        @default(now())
+  progress       FixItProgress[]
+
+  @@map("fix_it_modules")
+}
+
+model FixItProgress {
+  id          String      @id @default(cuid())
+  userId      String
+  moduleId    String
+  taskId      String
+  status      String      @default("pending")
+  completedAt DateTime?
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module      FixItModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId, taskId])
+  @@map("fix_it_progress")
+}
+
+model ShareToken {
+  id           String     @id @default(cuid())
+  assessmentId String
+  token        String     @unique @default(cuid())
+  expiresAt    DateTime?
+  revokedAt    DateTime?
+  createdAt    DateTime   @default(now())
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@map("share_tokens")
+}

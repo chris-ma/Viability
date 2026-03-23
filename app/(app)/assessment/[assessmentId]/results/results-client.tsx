@@ -1,0 +1,280 @@
+"use client"
+import Link from "next/link"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { ViabilityRadarChart, buildRadarData } from "@/components/charts/radar-chart"
+import { ScoreGauge } from "@/components/charts/score-gauge"
+import { DimensionBars } from "@/components/charts/dimension-bars"
+import { FIX_IT_MODULES } from "@/lib/data/fix-it-modules"
+import { getVerdictConfig } from "@/lib/scoring/engine"
+import type { DimensionScore, KillFlag, ScoringResult } from "@/lib/scoring/engine"
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Download,
+  Share2,
+  ArrowRight,
+  RotateCcw,
+  XCircle,
+  ChevronDown,
+  ChevronUp,
+  Wrench,
+} from "lucide-react"
+import { formatDate } from "@/lib/utils"
+import { toast } from "sonner"
+
+interface ResultsClientProps {
+  assessment: {
+    id: string
+    overallScore: number
+    verdict: "VIABLE" | "PROMISING" | "NEEDS_WORK" | "NOT_VIABLE"
+    completedAt: string
+    idea: {
+      id: string
+      title: string
+      problem: string
+      solution: string
+      industry: string
+      model: string
+    }
+    dimensionResults: Array<{
+      dimensionId: number
+      rawScore: number
+      weightedScore: number
+      killFlag: boolean
+    }>
+  }
+  dimensionScores: DimensionScore[]
+  killFlags: KillFlag[]
+}
+
+export function ResultsClient({ assessment, dimensionScores, killFlags }: ResultsClientProps) {
+  const [showKillFlow, setShowKillFlow] = useState(false)
+  const verdictConfig = getVerdictConfig(assessment.verdict)
+  const radarData = buildRadarData(dimensionScores)
+
+  const weakDimensions = dimensionScores.filter((d) => d.rawScore < 50)
+  const fixItModules = weakDimensions
+    .map((d) => FIX_IT_MODULES.find((m) => m.dimensionId === d.dimensionId))
+    .filter(Boolean)
+
+  const isKillVerdict = assessment.verdict === "NOT_VIABLE"
+  const multipleKillFlags = killFlags.length >= 3
+
+  function handleShare() {
+    navigator.clipboard.writeText(window.location.href)
+    toast.success("Link copied to clipboard")
+  }
+
+  return (
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-2">
+          <Badge variant="secondary" className="text-xs">Assessment Complete</Badge>
+          <span className="text-xs text-gray-400">{formatDate(assessment.completedAt)}</span>
+        </div>
+        <h1 className="text-3xl font-black text-gray-900 mb-1">{assessment.idea.title}</h1>
+        <p className="text-gray-500 text-sm">{assessment.idea.industry} · {assessment.idea.model}</p>
+      </div>
+
+      {/* Kill Flags Banner */}
+      {killFlags.length > 0 && (
+        <div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-5">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold text-red-700 mb-2">
+                {killFlags.length} Kill Flag{killFlags.length > 1 ? "s" : ""} Triggered
+              </p>
+              <div className="space-y-2">
+                {killFlags.map((flag) => (
+                  <div key={flag.itemId}>
+                    <p className="text-sm font-semibold text-red-600">{flag.dimensionName}</p>
+                    <p className="text-xs text-red-500">{flag.reason}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main verdict + gauge */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <Card className="lg:col-span-1">
+          <CardContent className="p-6">
+            <ScoreGauge score={assessment.overallScore} verdict={assessment.verdict} />
+            <Separator className="my-4" />
+            <p className="text-sm text-gray-600 text-center">{verdictConfig.description}</p>
+            <p className="text-xs text-gray-400 text-center mt-2">{verdictConfig.action}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Viability Radar</CardTitle>
+            <p className="text-xs text-gray-400">Grey dashed = industry benchmark</p>
+          </CardHeader>
+          <CardContent>
+            <ViabilityRadarChart
+              data={radarData}
+              verdict={assessment.verdict}
+              size="lg"
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Dimension breakdown */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Dimension Breakdown</CardTitle>
+          <p className="text-sm text-gray-500">Sorted worst-first. Green ≥75%, Amber 50–74%, Red &lt;50%</p>
+        </CardHeader>
+        <CardContent>
+          <DimensionBars
+            dimensionScores={dimensionScores}
+            showFixItLinks={true}
+            onFixItClick={(dimId) => {
+              document.getElementById(`fixit-${dimId}`)?.scrollIntoView({ behavior: "smooth" })
+            }}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Fix-It Modules */}
+      {fixItModules.length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-amber-100 rounded-xl flex items-center justify-center">
+              <Wrench className="h-4 w-4 text-amber-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-gray-900">Fix-It Modules</h2>
+              <p className="text-sm text-gray-500">{fixItModules.length} dimension{fixItModules.length > 1 ? "s" : ""} scoring below 50% — here's how to fix them</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {fixItModules.map((module) => {
+              if (!module) return null
+              const dimScore = dimensionScores.find((d) => d.dimensionId === module.dimensionId)
+
+              return (
+                <Card key={module.dimensionId} id={`fixit-${module.dimensionId}`} className="border-amber-200">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <Badge variant="amber" className="mb-2 text-xs">Fix-It Module</Badge>
+                        <CardTitle className="text-base">{module.title}</CardTitle>
+                        <p className="text-xs text-gray-500 mt-1">⏱ {module.estimatedTime}</p>
+                      </div>
+                      {dimScore && (
+                        <div className="text-right shrink-0">
+                          <div className="text-2xl font-black text-red-500">{Math.round(dimScore.rawScore)}%</div>
+                          <div className="text-xs text-gray-400">current score</div>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600">{module.description}</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {module.tasks.map((task, i) => (
+                        <div key={task.id} className="flex items-start gap-3">
+                          <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0 mt-0.5">
+                            {i + 1}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900">{task.title}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{task.description}</p>
+                            {task.resource && (
+                              <p className="text-xs text-blue-600 mt-0.5">📎 {task.resource}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Kill Idea Flow */}
+      {(isKillVerdict || multipleKillFlags) && (
+        <Card className="mb-6 border-red-200 bg-red-50">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <XCircle className="h-8 w-8 text-red-500 shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-lg font-black text-red-700 mb-2">
+                  This idea is showing fundamental viability issues.
+                </h3>
+                <p className="text-sm text-red-600 mb-4">
+                  Your score of {Math.round(assessment.overallScore)} and {killFlags.length} kill flag{killFlags.length !== 1 ? "s" : ""} indicate this idea — in its current form — faces serious obstacles to viability. This is genuinely valuable information.
+                </p>
+                <p className="text-sm text-gray-600 mb-4">
+                  The most common response is to either <strong>pivot</strong> (change a fundamental assumption about the market, customer, or model) or <strong>archive</strong> (save the idea and come back with new information). Both are valid.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Link href="/assessment/new">
+                    <Button variant="outline" size="sm">
+                      <ArrowRight className="h-4 w-4" />
+                      Test a New Idea
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => toast.info("Idea archived. You can find it in My Ideas.")}
+                  >
+                    Archive This Idea
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Actions */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex flex-wrap gap-3 justify-between items-center">
+            <div className="flex flex-wrap gap-3">
+              <Link href="/assessment/new">
+                <Button size="lg">
+                  <ArrowRight className="h-4 w-4" />
+                  {assessment.verdict === "VIABLE" ? "Build Your MVP" : "Test Another Idea"}
+                </Button>
+              </Link>
+              <Link href={`/assessment/${assessment.id}/checklist`}>
+                <Button variant="outline" size="lg">
+                  <RotateCcw className="h-4 w-4" />
+                  Re-assess
+                </Button>
+              </Link>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" size="sm" onClick={handleShare}>
+                <Share2 className="h-4 w-4" />
+                Share
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => toast.info("PDF download available on Pro plan")}>
+                <Download className="h-4 w-4" />
+                Download PDF
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
