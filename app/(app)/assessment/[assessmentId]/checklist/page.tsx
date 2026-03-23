@@ -2,24 +2,23 @@
 import { useState, useEffect, use } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import { LiveRadarPreview } from "@/components/charts/live-radar-preview"
 import { DIMENSIONS } from "@/lib/data/checklist"
 import { calculateScores } from "@/lib/scoring/engine"
 import type { ScoringResult, AnswerValue } from "@/lib/scoring/engine"
-import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Send } from "lucide-react"
+import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Send, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
 type AllAnswers = Record<number, Record<string, AnswerValue>>
 
 const ANSWER_OPTIONS: Array<{ value: AnswerValue; label: string; description: string; color: string }> = [
-  { value: "yes", label: "Yes", description: "Fully confirmed", color: "border-green-500 bg-green-50 text-green-800" },
-  { value: "partially", label: "Partially", description: "Some evidence", color: "border-amber-500 bg-amber-50 text-amber-800" },
-  { value: "no", label: "No", description: "Not yet", color: "border-red-500 bg-red-50 text-red-800" },
-  { value: "dont_know", label: "Don't Know", description: "Unvalidated", color: "border-gray-400 bg-gray-50 text-gray-700" },
+  { value: "yes",        label: "Yes",        description: "Fully confirmed",  color: "border-green-500 bg-green-50 text-green-800" },
+  { value: "partially",  label: "Partially",  description: "Some evidence",    color: "border-amber-500 bg-amber-50 text-amber-800" },
+  { value: "no",         label: "No",         description: "Not yet",          color: "border-red-500 bg-red-50 text-red-800" },
+  { value: "dont_know",  label: "Don't Know", description: "Unvalidated",      color: "border-[#F2D9C0] bg-[#FBF7F0] text-[#1C0F07]/65" },
 ]
 
 function AnswerButton({
@@ -86,8 +85,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
   // Recalculate score whenever answers change
   useEffect(() => {
     if (Object.keys(allAnswers).length > 0) {
-      const result = calculateScores(allAnswers)
-      setScoringResult(result)
+      setScoringResult(calculateScores(allAnswers))
     }
   }, [allAnswers])
 
@@ -97,16 +95,17 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
     0
   )
   const completionPct = totalItems > 0 ? (totalAnswered / totalItems) * 100 : 0
+  const completedDims = DIMENSIONS.filter(
+    (d) => Object.keys(allAnswers[d.id] ?? {}).length === d.items.length
+  ).length
 
   async function saveAnswer(dimensionId: number, itemId: string, answer: AnswerValue) {
     const key = `${dimensionId}-${itemId}`
     setSaving(key)
-
     setAllAnswers((prev) => ({
       ...prev,
       [dimensionId]: { ...(prev[dimensionId] ?? {}), [itemId]: answer },
     }))
-
     try {
       await fetch(`/api/assessments/${assessmentId}/answers`, {
         method: "POST",
@@ -126,7 +125,6 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
       return
     }
     setSubmitting(true)
-
     try {
       const res = await fetch(`/api/assessments/${assessmentId}/submit`, { method: "POST" })
       if (!res.ok) throw new Error("Submit failed")
@@ -139,11 +137,13 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-[#F2D9C0] rounded w-1/3" />
-          <div className="h-4 bg-[#FBF7F0] rounded w-full" />
-          <div className="h-64 bg-[#FBF7F0] rounded-2xl" />
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <div className="animate-pulse space-y-5">
+          <div className="h-6 bg-[#F2D9C0] rounded-full w-1/3 mx-auto" />
+          <div className="h-10 bg-[#F2D9C0] rounded-2xl w-2/3 mx-auto" />
+          <div className="h-2 bg-[#F2D9C0] rounded-full w-full" />
+          <div className="h-48 bg-[#F2D9C0]/50 rounded-2xl" />
+          <div className="h-48 bg-[#F2D9C0]/30 rounded-2xl" />
         </div>
       </div>
     )
@@ -152,31 +152,45 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
   const activeKillFlags = scoringResult?.killFlags ?? []
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-2">
-          <h1 className="text-2xl font-black text-[#1C0F07] truncate">{assessmentTitle}</h1>
-        </div>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+      {/* ── Project hero header ────────────────────────────────────────────── */}
+      <div className="mb-8">
+        <p className="text-xs font-semibold text-[#D4622A] uppercase tracking-widest mb-1">
+          Viability Assessment
+        </p>
+        <h1 className="text-3xl font-black text-[#1C0F07] mb-4 truncate">
+          {assessmentTitle}
+        </h1>
+
+        {/* Overall progress bar */}
         <div className="flex items-center gap-4">
-          <Progress value={completionPct} className="flex-1 max-w-xs" />
-          <span className="text-sm font-medium text-[#1C0F07]/65">
-            {totalAnswered}/{totalItems} answered
+          <div className="flex-1 h-2 bg-[#F2D9C0] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#1C0F07] rounded-full transition-all duration-500"
+              style={{ width: `${completionPct}%` }}
+            />
+          </div>
+          <span className="text-sm font-semibold text-[#1C0F07] whitespace-nowrap">
+            {totalAnswered}/{totalItems}
+          </span>
+          <span className="text-xs text-[#1C0F07]/40 whitespace-nowrap hidden sm:block">
+            {completedDims}/{DIMENSIONS.length} sections
           </span>
         </div>
       </div>
 
-      {/* Kill flag alerts */}
+      {/* ── Kill flag alerts ───────────────────────────────────────────────── */}
       {activeKillFlags.length > 0 && (
         <div className="mb-6 space-y-2">
           {activeKillFlags.map((flag) => (
             <div
               key={flag.itemId}
-              className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4"
+              className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-2xl p-4"
             >
               <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-bold text-red-700">Kill Flag: {flag.dimensionName}</p>
+                <p className="text-sm font-bold text-red-700">Kill Flag — {flag.dimensionName}</p>
                 <p className="text-xs text-red-600 mt-0.5">{flag.reason}</p>
               </div>
             </div>
@@ -184,26 +198,34 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
         </div>
       )}
 
-      <div className="flex gap-6">
-        {/* Main checklist */}
+      <div className="flex gap-6 items-start">
+
+        {/* ── Main checklist ─────────────────────────────────────────────── */}
         <div className="flex-1 min-w-0 space-y-3">
+
           {DIMENSIONS.map((dimension) => {
             const dimAnswers = allAnswers[dimension.id] ?? {}
             const answeredInDim = Object.keys(dimAnswers).length
             const isComplete = answeredInDim === dimension.items.length
             const isActive = activeDimension === dimension.id
-            const dimScore = scoringResult?.dimensionScores.find(
-              (d) => d.dimensionId === dimension.id
-            )
+            const dimScore = scoringResult?.dimensionScores.find((d) => d.dimensionId === dimension.id)
             const hasKillFlag = dimScore?.killFlag
 
             return (
-              <Card key={dimension.id} className={cn(hasKillFlag ? "border-red-300" : "")}>
-                {/* Dimension header */}
+              <Card
+                key={dimension.id}
+                className={cn(
+                  "overflow-hidden transition-shadow",
+                  hasKillFlag ? "border-red-300" : "",
+                  isActive ? "shadow-md" : ""
+                )}
+              >
+                {/* Dimension header button */}
                 <button
-                  className="w-full p-5 flex items-center gap-4 text-left"
+                  className="w-full px-5 py-4 flex items-center gap-4 text-left hover:bg-[#FBF7F0]/60 transition-colors"
                   onClick={() => setActiveDimension(isActive ? 0 : dimension.id)}
                 >
+                  {/* Status dot */}
                   <div
                     className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0",
@@ -211,50 +233,59 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                         ? "bg-green-100 text-green-700"
                         : answeredInDim > 0
                         ? "bg-[#F2D9C0] text-[#D4622A]"
-                        : "bg-[#F2D9C0]/50 text-[#1C0F07]/55"
+                        : "bg-[#F2D9C0]/50 text-[#1C0F07]/40"
                     )}
                   >
                     {isComplete ? <CheckCircle2 className="h-4 w-4" /> : dimension.id}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-[#1C0F07] text-sm">{dimension.name}</span>
                       {hasKillFlag && (
-                        <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />
+                        <Badge variant="red" className="text-xs shrink-0">Kill Flag</Badge>
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
                       <span className="text-xs text-[#1C0F07]/55">
                         {answeredInDim}/{dimension.items.length} answered
                       </span>
-                      <span className="text-xs text-[#1C0F07]/40">Weight: {Math.round(dimension.weight * 100)}%</span>
                       {dimScore && answeredInDim > 0 && (
                         <span
                           className="text-xs font-bold"
                           style={{
                             color:
-                              dimScore.rawScore >= 75
-                                ? "#22c55e"
-                                : dimScore.rawScore >= 50
-                                ? "#f59e0b"
-                                : "#ef4444",
+                              dimScore.rawScore >= 75 ? "#22c55e"
+                              : dimScore.rawScore >= 50 ? "#f59e0b"
+                              : "#ef4444",
                           }}
                         >
                           {Math.round(dimScore.rawScore)}%
                         </span>
                       )}
+                      <span className="text-xs text-[#1C0F07]/40 hidden sm:block">
+                        Weight {Math.round(dimension.weight * 100)}%
+                      </span>
                     </div>
                   </div>
 
-                  {isActive ? (
-                    <ChevronDown className="h-4 w-4 text-[#1C0F07]/40 shrink-0" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-[#1C0F07]/40 shrink-0" />
+                  {/* Mini progress bar */}
+                  {answeredInDim > 0 && !isComplete && (
+                    <div className="w-16 h-1 bg-[#F2D9C0] rounded-full overflow-hidden shrink-0 hidden sm:block">
+                      <div
+                        className="h-full bg-[#D4622A] rounded-full"
+                        style={{ width: `${(answeredInDim / dimension.items.length) * 100}%` }}
+                      />
+                    </div>
                   )}
+
+                  {isActive
+                    ? <ChevronDown className="h-4 w-4 text-[#1C0F07]/40 shrink-0" />
+                    : <ChevronRight className="h-4 w-4 text-[#1C0F07]/40 shrink-0" />
+                  }
                 </button>
 
-                {/* Items */}
+                {/* Questions */}
                 {isActive && (
                   <div className="border-t border-[#F2D9C0]/60">
                     {dimension.items.map((item, idx) => {
@@ -265,7 +296,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                         <div
                           key={item.id}
                           className={cn(
-                            "p-5",
+                            "px-5 py-4",
                             idx > 0 ? "border-t border-[#F2D9C0]/60" : "",
                             item.isKillFlagItem ? "bg-red-50/30" : ""
                           )}
@@ -275,9 +306,13 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                               {item.isKillFlagItem && (
                                 <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
                               )}
-                              <p className="text-sm font-semibold text-[#1C0F07]">{item.question}</p>
+                              <p className="text-sm font-semibold text-[#1C0F07] leading-relaxed">
+                                {item.question}
+                              </p>
                             </div>
-                            <p className="text-xs text-[#1C0F07]/55 mt-1 ml-6">{item.helpText}</p>
+                            <p className="text-xs text-[#1C0F07]/55 mt-1 leading-relaxed ml-6">
+                              {item.helpText}
+                            </p>
                           </div>
                           <div className={cn("flex gap-2", isSaving ? "opacity-60" : "")}>
                             {ANSWER_OPTIONS.map((option) => (
@@ -292,81 +327,112 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                         </div>
                       )
                     })}
+
+                    {/* Next section nudge */}
+                    {isComplete && (
+                      <div className="px-5 py-3 bg-green-50/60 border-t border-green-100 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-green-700 flex items-center gap-1.5">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Section complete
+                        </span>
+                        {(() => {
+                          const nextDim = DIMENSIONS.find((d) => d.id === dimension.id + 1)
+                          return nextDim ? (
+                            <button
+                              onClick={() => setActiveDimension(nextDim.id)}
+                              className="text-xs font-semibold text-[#D4622A] flex items-center gap-1 hover:underline"
+                            >
+                              Next: {nextDim.shortName}
+                              <ArrowRight className="h-3 w-3" />
+                            </button>
+                          ) : null
+                        })()}
+                      </div>
+                    )}
                   </div>
                 )}
               </Card>
             )
           })}
 
-          {/* Submit */}
-          <div className="mt-6 pb-8">
-            <Card className="border-2 border-dashed border-[#F2D9C0]">
-              <CardContent className="p-6 text-center">
-                <h3 className="font-bold text-[#1C0F07] mb-2">Ready to get your verdict?</h3>
-                <p className="text-sm text-[#1C0F07]/55 mb-4">
-                  {totalAnswered < totalItems
-                    ? `You have ${totalItems - totalAnswered} unanswered questions. You can still submit.`
-                    : "All questions answered. Submit to see your full Viability Score."}
+          {/* Submit card */}
+          <div className="pt-2 pb-10">
+            <div className="rounded-2xl border-2 border-dashed border-[#F2D9C0] bg-[#FBF7F0] p-6 text-center">
+              <p className="font-bold text-[#1C0F07] mb-1 text-lg">Ready for your verdict?</p>
+              <p className="text-sm text-[#1C0F07]/55 mb-5">
+                {totalAnswered < totalItems
+                  ? `${totalItems - totalAnswered} questions unanswered — you can still submit now.`
+                  : "All questions answered. Submit to see your full Viability Score."}
+              </p>
+              <Button
+                size="lg"
+                onClick={handleSubmit}
+                disabled={submitting || totalAnswered === 0}
+                className="min-w-48"
+              >
+                {submitting ? "Calculating…" : (
+                  <>
+                    <Send className="h-4 w-4" />
+                    Get My Verdict
+                  </>
+                )}
+              </Button>
+              {totalAnswered > 0 && (
+                <p className="text-xs text-[#1C0F07]/40 mt-3">
+                  {Math.round(completionPct)}% complete · {totalAnswered} answers recorded
                 </p>
-                <Button
-                  size="lg"
-                  onClick={handleSubmit}
-                  disabled={submitting || totalAnswered === 0}
-                  className="min-w-40"
-                >
-                  {submitting ? (
-                    "Calculating..."
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4" />
-                      Submit &amp; Get Verdict
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Sidebar - live radar preview (desktop only) */}
+        {/* ── Sidebar (desktop) ──────────────────────────────────────────── */}
         <div className="hidden xl:block w-72 shrink-0">
           <div className="sticky top-6 space-y-4">
+
+            {/* Live radar */}
             <LiveRadarPreview
               scoringResult={scoringResult}
               completionPercentage={completionPct}
             />
 
-            {/* Dimension status */}
-            <Card>
-              <CardContent className="p-4">
-                <p className="text-xs font-semibold text-[#1C0F07]/55 uppercase tracking-wider mb-3">Progress</p>
-                <div className="space-y-2">
-                  {DIMENSIONS.map((dim) => {
-                    const answered = Object.keys(allAnswers[dim.id] ?? {}).length
-                    const complete = answered === dim.items.length
-                    const started = answered > 0
-                    return (
-                      <button
-                        key={dim.id}
-                        onClick={() => setActiveDimension(dim.id)}
-                        className="w-full flex items-center gap-2 text-left hover:bg-[#F2D9C0]/40 rounded-lg px-2 py-1.5 transition-colors"
-                      >
-                        <div
-                          className={cn(
-                            "w-2 h-2 rounded-full shrink-0",
-                            complete ? "bg-green-500" : started ? "bg-[#D4622A]" : "bg-[#F2D9C0]"
-                          )}
-                        />
-                        <span className="text-xs text-[#1C0F07]/65 truncate">{dim.shortName}</span>
-                        <span className="text-xs text-[#1C0F07]/40 ml-auto shrink-0">
-                          {answered}/{dim.items.length}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Section progress */}
+            <div className="bg-white rounded-2xl border border-[#F2D9C0] p-4">
+              <p className="text-xs font-semibold text-[#1C0F07]/55 uppercase tracking-wider mb-3">
+                Sections
+              </p>
+              <div className="space-y-1">
+                {DIMENSIONS.map((dim) => {
+                  const answered = Object.keys(allAnswers[dim.id] ?? {}).length
+                  const complete = answered === dim.items.length
+                  const started = answered > 0
+                  return (
+                    <button
+                      key={dim.id}
+                      onClick={() => setActiveDimension(dim.id)}
+                      className={cn(
+                        "w-full flex items-center gap-2.5 text-left px-2 py-2 rounded-xl transition-colors",
+                        activeDimension === dim.id
+                          ? "bg-[#F2D9C0]/60"
+                          : "hover:bg-[#F2D9C0]/40"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "w-2 h-2 rounded-full shrink-0",
+                          complete ? "bg-green-500" : started ? "bg-[#D4622A]" : "bg-[#F2D9C0]"
+                        )}
+                      />
+                      <span className="text-xs text-[#1C0F07]/70 truncate flex-1">{dim.shortName}</span>
+                      <span className="text-xs text-[#1C0F07]/40 shrink-0">
+                        {answered}/{dim.items.length}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
