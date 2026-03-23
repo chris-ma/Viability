@@ -1,15 +1,18 @@
 "use client"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useAuth, SignInButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { INDUSTRIES, BUSINESS_MODELS } from "@/lib/data/checklist"
-import { ArrowRight, Lightbulb } from "lucide-react"
+import { ArrowRight, Lightbulb, LogIn } from "lucide-react"
 import { toast } from "sonner"
+
+const STORAGE_KEY = "viability_draft_idea"
 
 interface FormData {
   title: string
@@ -19,17 +22,42 @@ interface FormData {
   model: string
 }
 
+const EMPTY_FORM: FormData = {
+  title: "",
+  problem: "",
+  solution: "",
+  industry: "",
+  model: "",
+}
+
 export default function NewAssessmentPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const { isSignedIn, isLoaded } = useAuth()
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState(1)
-  const [form, setForm] = useState<FormData>({
-    title: "",
-    problem: "",
-    solution: "",
-    industry: "",
-    model: "",
-  })
+  const [form, setForm] = useState<FormData>(EMPTY_FORM)
+
+  // Restore draft on return from sign-up
+  useEffect(() => {
+    const isResume = searchParams.get("resume") === "1"
+    if (isResume && isSignedIn) {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY)
+        if (saved) {
+          const parsed = JSON.parse(saved) as FormData
+          setForm(parsed)
+          // Jump to the last non-empty step
+          if (parsed.industry || parsed.model) setStep(3)
+          else if (parsed.problem || parsed.solution) setStep(2)
+          localStorage.removeItem(STORAGE_KEY)
+          toast.success("Welcome back! Your idea draft has been restored.")
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }, [isSignedIn, searchParams])
 
   const updateForm = (key: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -41,29 +69,36 @@ export default function NewAssessmentPage() {
 
   async function handleSubmit() {
     if (!canSubmit) return
-    setLoading(true)
 
+    // If not signed in, save draft and prompt to sign in
+    if (!isSignedIn) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(form))
+      } catch {
+        // ignore storage errors
+      }
+      // Redirect to sign-in with return URL
+      router.push(`/sign-in?redirect_url=${encodeURIComponent("/assessment/new?resume=1")}`)
+      return
+    }
+
+    setLoading(true)
     try {
-      // Ensure user exists in DB
       await fetch("/api/user/sync", { method: "POST" })
 
-      // Create idea
       const ideaRes = await fetch("/api/ideas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       })
-
       if (!ideaRes.ok) throw new Error("Failed to create idea")
       const idea = await ideaRes.json()
 
-      // Create assessment
       const assessmentRes = await fetch("/api/assessments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ideaId: idea.id }),
       })
-
       if (!assessmentRes.ok) throw new Error("Failed to create assessment")
       const assessment = await assessmentRes.json()
 
@@ -76,7 +111,6 @@ export default function NewAssessmentPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-      {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-4">
           <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
@@ -238,6 +272,15 @@ export default function NewAssessmentPage() {
                 <p className="text-xs text-gray-500 line-clamp-2">{form.problem}</p>
               </div>
 
+              {isLoaded && !isSignedIn && (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+                  <LogIn className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
+                  <p className="text-sm text-blue-800">
+                    You'll need to create a free account to start your assessment. Your idea will be saved automatically.
+                  </p>
+                </div>
+              )}
+
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setStep(2)} className="flex-1">
                   Back
@@ -248,7 +291,11 @@ export default function NewAssessmentPage() {
                   disabled={!canSubmit || loading}
                   size="lg"
                 >
-                  {loading ? "Starting..." : "Start Assessment"}
+                  {loading
+                    ? "Starting..."
+                    : isLoaded && !isSignedIn
+                    ? "Create Account & Start"
+                    : "Start Assessment"}
                   {!loading && <ArrowRight className="h-4 w-4" />}
                 </Button>
               </div>

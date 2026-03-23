@@ -367,10 +367,12 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
                   <Share2 className="h-4 w-4" />
                   Share
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => toast.info("PDF download available on Pro plan")}>
-                  <Download className="h-4 w-4" />
-                  Download PDF
-                </Button>
+                <a href={`/api/assessments/${assessment.id}/pdf`} download>
+                  <Button variant="outline" size="sm">
+                    <Download className="h-4 w-4" />
+                    Download PDF
+                  </Button>
+                </a>
               </div>
             </div>
           </CardContent>
