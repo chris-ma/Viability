@@ -7,6 +7,8 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts"
+import { motion } from "framer-motion"
+import { AlertTriangle } from "lucide-react"
 import { getScoreColor } from "@/lib/scoring/engine"
 
 interface RadarDataPoint {
@@ -53,7 +55,10 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
         <p className="font-bold text-gray-900 mb-1">{data.dimension}</p>
         <p className="text-gray-600">Score: <span className="font-semibold" style={{ color: getScoreColor(data.score) }}>{Math.round(data.score)}/100</span></p>
         {data.killFlag && (
-          <p className="text-red-500 font-semibold mt-1">⚠ Kill Flag</p>
+          <div className="flex items-center gap-1 text-red-500 font-semibold mt-1">
+            <AlertTriangle className="h-3 w-3" />
+            <span>Kill Flag</span>
+          </div>
         )}
       </div>
     )
@@ -66,37 +71,44 @@ export function ViabilityRadarChart({ data, verdict, size = "lg" }: ViabilityRad
   const height = size === "sm" ? 200 : 380
 
   return (
-    <ResponsiveContainer width="100%" height={height}>
-      <RadarChart data={data} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
-        <PolarGrid stroke="#e5e7eb" />
-        <PolarAngleAxis
-          dataKey="dimension"
-          tick={{ fontSize: size === "sm" ? 9 : 11, fill: "#6b7280", fontWeight: 500 }}
-        />
-        <Tooltip content={<CustomTooltip />} />
-        {/* Industry benchmark */}
-        <Radar
-          name="Industry Benchmark"
-          dataKey="benchmark"
-          stroke="#9ca3af"
-          fill="#9ca3af"
-          fillOpacity={0.1}
-          strokeDasharray="4 4"
-          strokeWidth={1}
-          dot={false}
-        />
-        {/* User scores */}
-        <Radar
-          name="Your Score"
-          dataKey="score"
-          stroke={color}
-          fill={color}
-          fillOpacity={0.25}
-          strokeWidth={2}
-          dot={{ fill: color, r: 3 }}
-        />
-      </RadarChart>
-    </ResponsiveContainer>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      <ResponsiveContainer width="100%" height={height}>
+        <RadarChart data={data} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
+          <PolarGrid stroke="#e5e7eb" />
+          <PolarAngleAxis
+            dataKey="dimension"
+            tick={{ fontSize: size === "sm" ? 9 : 11, fill: "#6b7280", fontWeight: 500 }}
+          />
+          <Tooltip content={<CustomTooltip />} />
+          {/* Industry benchmark */}
+          <Radar
+            name="Industry Benchmark"
+            dataKey="benchmark"
+            stroke="#9ca3af"
+            fill="#9ca3af"
+            fillOpacity={0.1}
+            strokeDasharray="4 4"
+            strokeWidth={1}
+            dot={false}
+          />
+          {/* User scores */}
+          <Radar
+            name="Your Score"
+            dataKey="score"
+            stroke={color}
+            fill={color}
+            fillOpacity={0.25}
+            strokeWidth={2}
+            dot={{ fill: color, r: 3 }}
+          />
+        </RadarChart>
+      </ResponsiveContainer>
+    </motion.div>
   )
 }
 

@@ -60,7 +60,6 @@ export function getVerdictConfig(
   const configs = {
     VIABLE: {
       label: "VIABLE",
-      emoji: "✅",
       color: "#22c55e",
       bgColor: "bg-green-500",
       textColor: "text-green-600",
@@ -71,7 +70,6 @@ export function getVerdictConfig(
     },
     PROMISING: {
       label: "PROMISING",
-      emoji: "🔵",
       color: "#3b82f6",
       bgColor: "bg-blue-500",
       textColor: "text-blue-600",
@@ -82,7 +80,6 @@ export function getVerdictConfig(
     },
     NEEDS_WORK: {
       label: "NEEDS WORK",
-      emoji: "⚠️",
       color: "#f59e0b",
       bgColor: "bg-amber-500",
       textColor: "text-amber-600",
@@ -93,7 +90,6 @@ export function getVerdictConfig(
     },
     NOT_VIABLE: {
       label: "NOT VIABLE",
-      emoji: "🔴",
       color: "#ef4444",
       bgColor: "bg-red-500",
       textColor: "text-red-600",

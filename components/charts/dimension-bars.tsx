@@ -1,4 +1,5 @@
 "use client"
+import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 
 interface DimensionBarProps {
@@ -30,13 +31,18 @@ function getBarTextColor(score: number): string {
 }
 
 export function DimensionBars({ dimensionScores, showFixItLinks, onFixItClick }: DimensionBarProps) {
-  // Sort worst first
   const sorted = [...dimensionScores].sort((a, b) => a.rawScore - b.rawScore)
 
   return (
     <div className="space-y-3">
-      {sorted.map((dim) => (
-        <div key={dim.dimensionId}>
+      {sorted.map((dim, i) => (
+        <motion.div
+          key={dim.dimensionId}
+          initial={{ opacity: 0, x: -16 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-20px" }}
+          transition={{ duration: 0.4, ease: "easeOut", delay: i * 0.05 }}
+        >
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <span className="text-sm font-medium text-gray-700 truncate">{dim.name}</span>
@@ -62,12 +68,15 @@ export function DimensionBars({ dimensionScores, showFixItLinks, onFixItClick }:
             </div>
           </div>
           <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-700 ${getBarColor(dim.rawScore)}`}
-              style={{ width: `${dim.rawScore}%` }}
+            <motion.div
+              className={`h-full rounded-full ${getBarColor(dim.rawScore)}`}
+              initial={{ width: 0 }}
+              whileInView={{ width: `${dim.rawScore}%` }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ duration: 0.7, ease: "easeOut", delay: i * 0.05 + 0.1 }}
             />
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   )

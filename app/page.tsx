@@ -1,7 +1,21 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, TrendingUp, Zap, Shield, BarChart3, Target, ArrowRight, AlertTriangle } from "lucide-react"
+import {
+  CheckCircle2,
+  TrendingUp,
+  Shield,
+  BarChart3,
+  Target,
+  ArrowRight,
+  AlertTriangle,
+  BarChart2,
+  DollarSign,
+  Brain,
+  Landmark,
+  Cog,
+} from "lucide-react"
+import { AnimatedSection } from "@/components/ui/animated-section"
 
 const STATS = [
   { value: "42%", label: "of startups fail from no market need" },
@@ -11,14 +25,14 @@ const STATS = [
 ]
 
 const DIMENSIONS = [
-  { name: "Market Need & Problem Validation", weight: "20%", icon: "🎯" },
-  { name: "Target Market & Size", weight: "10%", icon: "📊" },
-  { name: "Competitive Landscape", weight: "12%", icon: "⚔️" },
-  { name: "Business Model & Revenue", weight: "18%", icon: "💰" },
-  { name: "Founder-Market Fit", weight: "12%", icon: "🧠" },
-  { name: "Financial Readiness", weight: "15%", icon: "🏦" },
-  { name: "Execution Feasibility", weight: "8%", icon: "⚙️" },
-  { name: "Early Traction Indicators", weight: "5%", icon: "📈" },
+  { name: "Market Need & Problem Validation", weight: "20%", icon: Target },
+  { name: "Target Market & Size", weight: "10%", icon: BarChart2 },
+  { name: "Competitive Landscape", weight: "12%", icon: Shield },
+  { name: "Business Model & Revenue", weight: "18%", icon: DollarSign },
+  { name: "Founder-Market Fit", weight: "12%", icon: Brain },
+  { name: "Financial Readiness", weight: "15%", icon: Landmark },
+  { name: "Execution Feasibility", weight: "8%", icon: Cog },
+  { name: "Early Traction Indicators", weight: "5%", icon: TrendingUp },
 ]
 
 const VERDICTS = [
@@ -53,57 +67,67 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-16 text-center">
-        <Badge variant="secondary" className="mb-6 text-xs">
-          Free to start · No credit card required
-        </Badge>
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-gray-900 leading-tight mb-6">
-          Kill bad ideas fast.<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-500">
-            Build the right ones.
-          </span>
-        </h1>
-        <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10">
-          Get a scored, evidence-based verdict on your business idea across 8 viability dimensions in under 30 minutes — before you spend a single pound.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/sign-up">
-            <Button size="xl" className="w-full sm:w-auto">
-              Assess My Idea Free
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-          </Link>
-          <Link href="/demo">
-            <Button size="xl" variant="outline" className="w-full sm:w-auto">
-              View Demo Assessment
-            </Button>
-          </Link>
-        </div>
+        <AnimatedSection delay={0}>
+          <Badge variant="secondary" className="mb-6 text-xs">
+            Free to start · No credit card required
+          </Badge>
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-gray-900 leading-tight mb-6">
+            Kill bad ideas fast.<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-500">
+              Build the right ones.
+            </span>
+          </h1>
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10">
+            Get a scored, evidence-based verdict on your business idea across 8 viability dimensions in under 30 minutes — before you spend a single pound.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/sign-up">
+              <Button size="xl" className="w-full sm:w-auto">
+                Assess My Idea Free
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </Link>
+            <Link href="/demo">
+              <Button size="xl" variant="outline" className="w-full sm:w-auto">
+                View Demo Assessment
+              </Button>
+            </Link>
+          </div>
+        </AnimatedSection>
       </section>
 
       {/* Stats */}
       <section className="bg-gray-900 py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <p className="text-center text-gray-400 text-sm font-medium mb-10 uppercase tracking-wider">
-            Why most startups fail — and why you need this before you build
-          </p>
+          <AnimatedSection>
+            <p className="text-center text-gray-400 text-sm font-medium mb-10 uppercase tracking-wider">
+              Why most startups fail — and why you need this before you build
+            </p>
+          </AnimatedSection>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {STATS.map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-4xl font-black text-white mb-2">{stat.value}</div>
-                <div className="text-gray-400 text-sm">{stat.label}</div>
-              </div>
+              <AnimatedSection key={i} delay={i * 0.08}>
+                <div className="text-center">
+                  <div className="text-4xl font-black text-white mb-2">{stat.value}</div>
+                  <div className="text-gray-400 text-sm">{stat.label}</div>
+                </div>
+              </AnimatedSection>
             ))}
           </div>
-          <p className="text-center text-gray-500 text-xs mt-8">Source: CB Insights post-mortem analysis of 483+ startup failures</p>
+          <AnimatedSection delay={0.3}>
+            <p className="text-center text-gray-500 text-xs mt-8">Source: CB Insights post-mortem analysis of 483+ startup failures</p>
+          </AnimatedSection>
         </div>
       </section>
 
       {/* How it works */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
-        <div className="text-center mb-14">
-          <h2 className="text-4xl font-black text-gray-900 mb-4">How it works</h2>
-          <p className="text-gray-500 text-lg">Three steps to an honest viability verdict</p>
-        </div>
+        <AnimatedSection>
+          <div className="text-center mb-14">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">How it works</h2>
+            <p className="text-gray-500 text-lg">Three steps to an honest viability verdict</p>
+          </div>
+        </AnimatedSection>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             {
@@ -124,19 +148,21 @@ export default function LandingPage() {
               title: "Get your verdict",
               desc: "Receive a scored Viability Report with radar chart, dimension breakdown, and targeted Fix-It action plans.",
             },
-          ].map((step) => (
-            <div key={step.step} className="relative">
-              <div className="text-7xl font-black text-gray-100 absolute -top-4 -left-2 select-none">
-                {step.step}
-              </div>
-              <div className="relative pt-8">
-                <div className="w-12 h-12 bg-gray-900 rounded-2xl flex items-center justify-center text-white mb-4">
-                  {step.icon}
+          ].map((step, i) => (
+            <AnimatedSection key={step.step} delay={i * 0.1}>
+              <div className="relative">
+                <div className="text-7xl font-black text-gray-100 absolute -top-4 -left-2 select-none">
+                  {step.step}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-gray-500">{step.desc}</p>
+                <div className="relative pt-8">
+                  <div className="w-12 h-12 bg-gray-900 rounded-2xl flex items-center justify-center text-white mb-4">
+                    {step.icon}
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
+                  <p className="text-gray-500">{step.desc}</p>
+                </div>
               </div>
-            </div>
+            </AnimatedSection>
           ))}
         </div>
       </section>
@@ -144,37 +170,50 @@ export default function LandingPage() {
       {/* 8 Dimensions */}
       <section className="bg-gray-50 py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <h2 className="text-4xl font-black text-gray-900 mb-4">8 Viability Dimensions</h2>
-            <p className="text-gray-500 text-lg">Every dimension weighted by its empirical correlation to startup failure</p>
-          </div>
+          <AnimatedSection>
+            <div className="text-center mb-14">
+              <h2 className="text-4xl font-black text-gray-900 mb-4">8 Viability Dimensions</h2>
+              <p className="text-gray-500 text-lg">Every dimension weighted by its empirical correlation to startup failure</p>
+            </div>
+          </AnimatedSection>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {DIMENSIONS.map((d, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-200 p-5">
-                <div className="text-3xl mb-3">{d.icon}</div>
-                <div className="text-sm font-bold text-gray-900 mb-1">{d.name}</div>
-                <div className="text-xs text-gray-500">Weight: <span className="font-semibold text-gray-700">{d.weight}</span></div>
-              </div>
-            ))}
+            {DIMENSIONS.map((d, i) => {
+              const Icon = d.icon
+              return (
+                <AnimatedSection key={i} delay={i * 0.06}>
+                  <div className="bg-white rounded-2xl border border-gray-200 p-5 h-full">
+                    <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mb-3">
+                      <Icon className="h-5 w-5 text-gray-700" />
+                    </div>
+                    <div className="text-sm font-bold text-gray-900 mb-1">{d.name}</div>
+                    <div className="text-xs text-gray-500">Weight: <span className="font-semibold text-gray-700">{d.weight}</span></div>
+                  </div>
+                </AnimatedSection>
+              )
+            })}
           </div>
         </div>
       </section>
 
       {/* Verdicts */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
-        <div className="text-center mb-14">
-          <h2 className="text-4xl font-black text-gray-900 mb-4">Clear verdicts. No fluff.</h2>
-          <p className="text-gray-500 text-lg">We'll tell you exactly where you stand — including if you should kill the idea</p>
-        </div>
+        <AnimatedSection>
+          <div className="text-center mb-14">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">Clear verdicts. No fluff.</h2>
+            <p className="text-gray-500 text-lg">We'll tell you exactly where you stand — including if you should kill the idea</p>
+          </div>
+        </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {VERDICTS.map((v) => (
-            <div key={v.label} className={`rounded-2xl border p-6 ${v.bg}`}>
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-2xl font-black text-gray-400">{v.score}</span>
-                <span className={`text-lg font-black ${v.color}`}>{v.label}</span>
+          {VERDICTS.map((v, i) => (
+            <AnimatedSection key={v.label} delay={i * 0.1}>
+              <div className={`rounded-2xl border p-6 ${v.bg}`}>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl font-black text-gray-400">{v.score}</span>
+                  <span className={`text-lg font-black ${v.color}`}>{v.label}</span>
+                </div>
+                <p className="text-gray-600 text-sm">{v.desc}</p>
               </div>
-              <p className="text-gray-600 text-sm">{v.desc}</p>
-            </div>
+            </AnimatedSection>
           ))}
         </div>
       </section>
@@ -182,46 +221,52 @@ export default function LandingPage() {
       {/* Fix-It */}
       <section className="bg-gray-900 py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <Badge className="bg-gray-800 text-gray-300 mb-6">Fix-It Modules</Badge>
-            <h2 className="text-4xl font-black text-white mb-4">
-              Score poorly? Here's exactly how to fix it.
-            </h2>
-            <p className="text-gray-400 text-lg mb-8">
-              For every dimension where you score below 50%, the app unlocks a targeted Fix-It Module — specific, actionable tasks to close the gap and re-test.
-            </p>
-            <div className="space-y-3">
-              {["5 actionable real-world tasks per weak dimension", "Recommended tools and frameworks", "Time estimates per module", "Re-assessment trigger when tasks are complete"].map((item) => (
-                <div key={item} className="flex items-center gap-3 text-gray-300">
-                  <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
-                  <span className="text-sm">{item}</span>
-                </div>
-              ))}
+          <AnimatedSection direction="left">
+            <div>
+              <Badge className="bg-gray-800 text-gray-300 mb-6">Fix-It Modules</Badge>
+              <h2 className="text-4xl font-black text-white mb-4">
+                Score poorly? Here's exactly how to fix it.
+              </h2>
+              <p className="text-gray-400 text-lg mb-8">
+                For every dimension where you score below 50%, the app unlocks a targeted Fix-It Module — specific, actionable tasks to close the gap and re-test.
+              </p>
+              <div className="space-y-3">
+                {["5 actionable real-world tasks per weak dimension", "Recommended tools and frameworks", "Time estimates per module", "Re-assessment trigger when tasks are complete"].map((item) => (
+                  <div key={item} className="flex items-center gap-3 text-gray-300">
+                    <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
+                    <span className="text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="h-5 w-5 text-amber-400" />
-              <span className="text-white font-semibold text-sm">Fix-It: Market Need</span>
+          </AnimatedSection>
+          <AnimatedSection direction="right" delay={0.1}>
+            <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+              <div className="flex items-center gap-2 mb-4">
+                <AlertTriangle className="h-5 w-5 text-amber-400" />
+                <span className="text-white font-semibold text-sm">Fix-It: Market Need</span>
+              </div>
+              <p className="text-gray-400 text-xs mb-4">Gap: You haven't validated that people are paying to solve this problem.</p>
+              <div className="space-y-3">
+                {["Conduct 5 Customer Discovery Interviews", "Run a Google Trends Analysis", "Find 3 relevant online communities", "Build a landing page demand test", "Document evidence of spending"].map((task, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded border border-gray-600 shrink-0 mt-0.5" />
+                    <span className="text-gray-300 text-sm">{task}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <p className="text-gray-400 text-xs mb-4">Gap: You haven't validated that people are paying to solve this problem.</p>
-            <div className="space-y-3">
-              {["Conduct 5 Customer Discovery Interviews", "Run a Google Trends Analysis", "Find 3 relevant online communities", "Build a landing page demand test", "Document evidence of spending"].map((task, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded border border-gray-600 shrink-0 mt-0.5" />
-                  <span className="text-gray-300 text-sm">{task}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
       {/* Pricing */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
-        <div className="text-center mb-14">
-          <h2 className="text-4xl font-black text-gray-900 mb-4">Simple pricing</h2>
-        </div>
+        <AnimatedSection>
+          <div className="text-center mb-14">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">Simple pricing</h2>
+          </div>
+        </AnimatedSection>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
@@ -254,48 +299,52 @@ export default function LandingPage() {
               href: "/sign-up",
               highlight: false,
             },
-          ].map((plan) => (
-            <div key={plan.plan} className={`rounded-2xl border p-8 ${plan.highlight ? "bg-gray-900 border-gray-900 text-white" : "bg-white border-gray-200"}`}>
-              <div className={`text-sm font-semibold mb-2 ${plan.highlight ? "text-gray-400" : "text-gray-500"}`}>{plan.plan}</div>
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className={`text-4xl font-black ${plan.highlight ? "text-white" : "text-gray-900"}`}>{plan.price}</span>
-                <span className={`text-sm ${plan.highlight ? "text-gray-400" : "text-gray-500"}`}>/{plan.period}</span>
+          ].map((plan, i) => (
+            <AnimatedSection key={plan.plan} delay={i * 0.1}>
+              <div className={`rounded-2xl border p-8 h-full ${plan.highlight ? "bg-gray-900 border-gray-900 text-white" : "bg-white border-gray-200"}`}>
+                <div className={`text-sm font-semibold mb-2 ${plan.highlight ? "text-gray-400" : "text-gray-500"}`}>{plan.plan}</div>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className={`text-4xl font-black ${plan.highlight ? "text-white" : "text-gray-900"}`}>{plan.price}</span>
+                  <span className={`text-sm ${plan.highlight ? "text-gray-400" : "text-gray-500"}`}>/{plan.period}</span>
+                </div>
+                <p className={`text-sm mb-6 ${plan.highlight ? "text-gray-400" : "text-gray-500"}`}>{plan.desc}</p>
+                <div className="space-y-3 mb-8">
+                  {plan.features.map((f) => (
+                    <div key={f} className="flex items-center gap-2">
+                      <CheckCircle2 className={`h-4 w-4 shrink-0 ${plan.highlight ? "text-green-400" : "text-green-500"}`} />
+                      <span className={`text-sm ${plan.highlight ? "text-gray-300" : "text-gray-600"}`}>{f}</span>
+                    </div>
+                  ))}
+                </div>
+                <Link href={plan.href}>
+                  <Button variant={plan.highlight ? "green" : "outline"} className="w-full" size="lg">
+                    {plan.cta}
+                  </Button>
+                </Link>
               </div>
-              <p className={`text-sm mb-6 ${plan.highlight ? "text-gray-400" : "text-gray-500"}`}>{plan.desc}</p>
-              <div className="space-y-3 mb-8">
-                {plan.features.map((f) => (
-                  <div key={f} className="flex items-center gap-2">
-                    <CheckCircle2 className={`h-4 w-4 shrink-0 ${plan.highlight ? "text-green-400" : "text-green-500"}`} />
-                    <span className={`text-sm ${plan.highlight ? "text-gray-300" : "text-gray-600"}`}>{f}</span>
-                  </div>
-                ))}
-              </div>
-              <Link href={plan.href}>
-                <Button variant={plan.highlight ? "green" : "outline"} className="w-full" size="lg">
-                  {plan.cta}
-                </Button>
-              </Link>
-            </div>
+            </AnimatedSection>
           ))}
         </div>
       </section>
 
       {/* CTA */}
       <section className="bg-gray-50 py-20">
-        <div className="max-w-2xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-black text-gray-900 mb-4">
-            Know before you build.
-          </h2>
-          <p className="text-gray-500 text-lg mb-8">
-            Every aspiring founder deserves an honest answer before they bet their time and money.
-          </p>
-          <Link href="/sign-up">
-            <Button size="xl">
-              Assess My Idea — It's Free
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-          </Link>
-        </div>
+        <AnimatedSection>
+          <div className="max-w-2xl mx-auto px-4 text-center">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">
+              Know before you build.
+            </h2>
+            <p className="text-gray-500 text-lg mb-8">
+              Every aspiring founder deserves an honest answer before they bet their time and money.
+            </p>
+            <Link href="/sign-up">
+              <Button size="xl">
+                Assess My Idea — It's Free
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </AnimatedSection>
       </section>
 
       {/* Footer */}
