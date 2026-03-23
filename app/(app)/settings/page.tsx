@@ -33,8 +33,8 @@ const PLAN_CONFIG: Record<string, {
 }> = {
   free: {
     label: "Free",
-    description: "Get started with basic viability assessments.",
-    features: ["1 active idea", "Full 8-dimension checklist", "Basic Fix-It summaries"],
+    description: "Get started with up to 10 free assessments.",
+    features: ["10 assessments included", "Full 8-dimension checklist", "Basic Fix-It summaries"],
     badge: "secondary",
   },
   pro: {

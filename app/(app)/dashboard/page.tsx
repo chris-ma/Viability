@@ -1,20 +1,32 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { prisma } from "@/lib/db/prisma"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Plus, BarChart3, Lightbulb, TrendingUp, AlertTriangle, Wrench, ArrowRight, CheckCircle2 } from "lucide-react"
 import { getVerdictConfig } from "@/lib/scoring/engine"
+import { DIMENSIONS } from "@/lib/data/checklist"
 import { FIX_IT_MODULES } from "@/lib/data/fix-it-modules"
 import { formatDate } from "@/lib/utils"
+import {
+  Plus,
+  ArrowRight,
+  BarChart3,
+  TrendingUp,
+  AlertTriangle,
+  Wrench,
+  Lightbulb,
+  Clock,
+  CheckCircle2,
+  Zap,
+} from "lucide-react"
+
+const FREE_LIMIT = 10
 
 async function getData(userId: string) {
-  const [ideas, fixItProgress] = await Promise.all([
+  const [ideas, totalAssessments, fixItDone] = await Promise.all([
     prisma.idea.findMany({
-      where: { userId },
+      where: { userId, status: { notIn: ["archived", "killed"] } },
       include: {
         assessments: {
           orderBy: { startedAt: "desc" },
@@ -25,215 +37,375 @@ async function getData(userId: string) {
             verdict: true,
             completedAt: true,
             startedAt: true,
-            dimensionResults: { where: { rawScore: { lt: 50 } }, select: { dimensionId: true } },
+            dimensionResults: {
+              select: { dimensionId: true, rawScore: true, killFlag: true },
+              orderBy: { dimensionId: "asc" },
+            },
           },
         },
       },
       orderBy: { updatedAt: "desc" },
     }),
-    prisma.fixItProgress.findMany({ where: { userId, completed: true } }),
+    prisma.assessment.count({ where: { idea: { userId } } }),
+    prisma.fixItProgress.count({ where: { userId, completed: true } }),
   ])
-  return { ideas, fixItProgress }
+  return { ideas, totalAssessments, fixItDone }
 }
+
+// ── Small helpers ────────────────────────────────────────────────────────────
+
+function ScorePill({ score, verdict }: { score: number; verdict: string }) {
+  const cfg = getVerdictConfig(verdict as any)
+  return (
+    <div className="text-center">
+      <div
+        className="text-5xl font-bold tracking-tight"
+        style={{ color: cfg.color }}
+      >
+        {Math.round(score)}
+      </div>
+      <div
+        className="text-xs font-semibold mt-1 uppercase tracking-widest"
+        style={{ color: cfg.color }}
+      >
+        {cfg.label}
+      </div>
+    </div>
+  )
+}
+
+function DimBar({ dimensionId, rawScore, killFlag }: { dimensionId: number; rawScore: number; killFlag: boolean }) {
+  const dim = DIMENSIONS.find((d) => d.id === dimensionId)
+  if (!dim) return null
+  const color = rawScore >= 75 ? "#22c55e" : rawScore >= 50 ? "#f59e0b" : "#ef4444"
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-[13px] text-[#6E6E73] w-28 shrink-0 truncate">{dim.shortName}</span>
+      <div className="flex-1 h-1.5 bg-black/[0.06] rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all"
+          style={{ width: `${rawScore}%`, backgroundColor: color }}
+        />
+      </div>
+      <span className="text-[13px] font-semibold w-8 text-right shrink-0" style={{ color }}>
+        {Math.round(rawScore)}
+      </span>
+      {killFlag && <AlertTriangle className="h-3 w-3 text-red-400 shrink-0" />}
+    </div>
+  )
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function DashboardPage() {
   const { userId: clerkId } = await auth()
   if (!clerkId) redirect("/sign-in")
 
+  const clerkUser = await currentUser()
+
   let user = await prisma.user.findUnique({ where: { clerkId } })
   if (!user) redirect("/api/user/sync")
 
-  const { ideas, fixItProgress } = await getData(user.id)
+  const { ideas, totalAssessments, fixItDone } = await getData(user.id)
 
-  const activeIdeas = ideas.filter((i) => i.status !== "archived" && i.status !== "killed")
-  const completedAssessments = activeIdeas.filter((i) => i.assessments[0]?.completedAt)
-  const viableCount = completedAssessments.filter(
-    (i) => i.assessments[0]?.verdict === "VIABLE"
-  ).length
-  const needsWorkCount = completedAssessments.filter(
+  const firstName = clerkUser?.firstName ?? "there"
+  const isFree = user.planTier === "free"
+  const atLimit = isFree && totalAssessments >= FREE_LIMIT
+  const nearLimit = isFree && totalAssessments >= FREE_LIMIT - 2
+
+  // Completed assessments sorted by completedAt desc
+  const completedIdeas = ideas
+    .filter((i) => i.assessments[0]?.completedAt)
+    .sort(
+      (a, b) =>
+        new Date(b.assessments[0]!.completedAt!).getTime() -
+        new Date(a.assessments[0]!.completedAt!).getTime()
+    )
+
+  const featuredIdea = completedIdeas[0] ?? ideas[0] ?? null
+  const otherIdeas = ideas.filter((i) => i.id !== featuredIdea?.id)
+
+  const totalIdeas = ideas.length
+  const viableCount = completedIdeas.filter((i) => i.assessments[0]?.verdict === "VIABLE").length
+  const needsWorkCount = completedIdeas.filter(
     (i) => i.assessments[0]?.verdict === "NEEDS_WORK" || i.assessments[0]?.verdict === "NOT_VIABLE"
   ).length
-
-  // Fix-It stats
-  const completedTaskIds = new Set(fixItProgress.map((p) => `${p.dimensionId}:${p.taskId}`))
-  const weakDimensions = completedAssessments.flatMap((i) =>
-    (i.assessments[0]?.dimensionResults ?? []).map((dr) => dr.dimensionId)
-  )
-  const uniqueWeakDims = [...new Set(weakDimensions)]
-  const totalFixItTasks = uniqueWeakDims.reduce((sum, dimId) => {
-    const module = FIX_IT_MODULES.find((m) => m.dimensionId === dimId)
-    return sum + (module?.tasks.length ?? 0)
-  }, 0)
-  const doneFixItTasks = uniqueWeakDims.reduce((sum, dimId) => {
-    const module = FIX_IT_MODULES.find((m) => m.dimensionId === dimId)
-    if (!module) return sum
-    return sum + module.tasks.filter((t) => completedTaskIds.has(`${dimId}:${t.id}`)).length
-  }, 0)
+  const inProgressCount = ideas.filter((i) => i.assessments[0] && !i.assessments[0].completedAt).length
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+    <div className="max-w-5xl mx-auto px-5 sm:px-8 py-10">
+
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      <div className="flex items-start justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-black text-[#1C0F07]">Dashboard</h1>
-          <p className="text-[#1C0F07]/55 mt-1">Your idea viability workspace</p>
+          <p className="text-sm text-[#AEAEB2] mb-0.5">Good to see you,</p>
+          <h1 className="text-2xl font-semibold text-[#1D1D1F] tracking-tight">{firstName}</h1>
         </div>
-        <Link href="/assessment/new">
-          <Button>
-            <Plus className="h-4 w-4" />
-            New Assessment
-          </Button>
-        </Link>
+        {atLimit ? (
+          <Link href="/settings">
+            <Button size="sm" className="gap-1.5 bg-[#D4622A] hover:bg-[#D4622A]/90">
+              <Zap className="h-3.5 w-3.5" />
+              Upgrade to continue
+            </Button>
+          </Link>
+        ) : (
+          <Link href="/assessment/new">
+            <Button size="sm" className="gap-1.5">
+              <Plus className="h-3.5 w-3.5" />
+              New Assessment
+            </Button>
+          </Link>
+        )}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "Total Ideas", value: activeIdeas.length, icon: Lightbulb, color: "text-[#1C0F07]/65", bg: "bg-[#F2D9C0]" },
-          { label: "Assessed", value: completedAssessments.length, icon: BarChart3, color: "text-[#D4622A]", bg: "bg-[#F2D9C0]" },
-          { label: "Viable", value: viableCount, icon: TrendingUp, color: "text-green-600", bg: "bg-green-100" },
-          { label: "Need Work", value: needsWorkCount, icon: AlertTriangle, color: "text-amber-600", bg: "bg-amber-100" },
-        ].map((stat) => {
-          const Icon = stat.icon
-          return (
-            <Card key={stat.label}>
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <div className={`w-9 h-9 ${stat.bg} rounded-xl flex items-center justify-center`}>
-                    <Icon className={`h-5 w-5 ${stat.color}`} />
-                  </div>
-                </div>
-                <p className="text-2xl font-black text-[#1C0F07]">{stat.value}</p>
-                <p className="text-xs text-[#1C0F07]/55 mt-0.5">{stat.label}</p>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
-      {/* Fix-It progress banner */}
-      {totalFixItTasks > 0 && (
-        <Link href="/fix-it">
-          <Card className="mb-6 border-amber-200 bg-amber-50/40 hover:border-amber-300 hover:shadow-sm transition-all cursor-pointer">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Wrench className="h-5 w-5 text-amber-600" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-sm font-bold text-[#1C0F07]">Fix-It Progress</p>
-                    <span className="text-xs text-gray-500">{doneFixItTasks}/{totalFixItTasks} tasks</span>
-                  </div>
-                  <Progress value={(doneFixItTasks / totalFixItTasks) * 100} className="h-2" />
-                  <p className="text-xs text-gray-500 mt-1.5">
-                    {doneFixItTasks === totalFixItTasks
-                      ? "All tasks complete — time to re-assess!"
-                      : `${totalFixItTasks - doneFixItTasks} tasks remaining across ${uniqueWeakDims.length} dimension${uniqueWeakDims.length !== 1 ? "s" : ""}`}
-                  </p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-gray-400 shrink-0" />
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
+      {/* ── Plan usage bar (free tier) ──────────────────────────────────────── */}
+      {isFree && (
+        <div className={`rounded-2xl p-4 mb-6 flex items-center gap-4 ${atLimit ? "bg-red-50 ring-1 ring-red-200" : nearLimit ? "bg-amber-50 ring-1 ring-amber-200" : "bg-white ring-1 ring-black/[0.06]"}`}>
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-2">
+              <span className={`text-sm font-medium ${atLimit ? "text-red-700" : "text-[#1D1D1F]"}`}>
+                {atLimit ? "Free limit reached" : `${totalAssessments} of ${FREE_LIMIT} free assessments used`}
+              </span>
+              <span className={`text-xs ${atLimit ? "text-red-500" : "text-[#AEAEB2]"}`}>
+                {isFree ? "Free" : "Founder Pro"}
+              </span>
+            </div>
+            <div className="h-1.5 bg-black/[0.06] rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${atLimit ? "bg-red-500" : nearLimit ? "bg-amber-500" : "bg-[#1D1D1F]"}`}
+                style={{ width: `${Math.min((totalAssessments / FREE_LIMIT) * 100, 100)}%` }}
+              />
+            </div>
+          </div>
+          <Link href="/settings">
+            <Button size="sm" variant="outline" className="shrink-0 text-xs gap-1">
+              {atLimit ? "Upgrade now" : "Go unlimited"}
+              <ArrowRight className="h-3 w-3" />
+            </Button>
+          </Link>
+        </div>
       )}
 
-      {/* Ideas list */}
-      {activeIdeas.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <div className="w-16 h-16 bg-[#F2D9C0] rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Lightbulb className="h-8 w-8 text-[#D4622A]/60" />
-            </div>
-            <h3 className="text-xl font-bold text-[#1C0F07] mb-2">No ideas yet</h3>
-            <p className="text-[#1C0F07]/55 mb-6 max-w-sm mx-auto">
-              Start your first viability assessment. It takes less than 30 minutes and could save you months of wasted effort.
+      {/* ── Stats row ───────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+        {[
+          { label: "Total ideas",   value: totalIdeas,       icon: Lightbulb,      color: "text-[#6E6E73]" },
+          { label: "Viable",        value: viableCount,      icon: TrendingUp,     color: "text-green-600" },
+          { label: "Needs work",    value: needsWorkCount,   icon: AlertTriangle,  color: "text-amber-500" },
+          { label: "Fix-It done",   value: fixItDone,        icon: CheckCircle2,   color: "text-[#D4622A]" },
+        ].map(({ label, value, icon: Icon, color }) => (
+          <div key={label} className="bg-white rounded-2xl ring-1 ring-black/[0.06] p-4">
+            <Icon className={`h-4 w-4 ${color} mb-2`} />
+            <div className="text-2xl font-semibold text-[#1D1D1F] tracking-tight">{value}</div>
+            <div className="text-xs text-[#AEAEB2] mt-0.5">{label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Empty state ─────────────────────────────────────────────────────── */}
+      {ideas.length === 0 && (
+        <div className="bg-white rounded-3xl ring-1 ring-black/[0.06] p-16 text-center">
+          <div className="w-14 h-14 bg-[#F2F2F7] rounded-2xl flex items-center justify-center mx-auto mb-5">
+            <Lightbulb className="h-7 w-7 text-[#AEAEB2]" />
+          </div>
+          <h2 className="text-xl font-semibold text-[#1D1D1F] mb-2">No ideas yet</h2>
+          <p className="text-sm text-[#6E6E73] mb-7 max-w-xs mx-auto">
+            Run your first viability assessment — 40 questions, 8 dimensions, one clear verdict.
+          </p>
+          <Link href="/assessment/new">
+            <Button size="lg">
+              <Plus className="h-4 w-4" />
+              Start your first assessment
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {/* ── Featured (latest) project ────────────────────────────────────────── */}
+      {featuredIdea && (() => {
+        const a = featuredIdea.assessments[0]
+        const cfg = a?.verdict ? getVerdictConfig(a.verdict as any) : null
+        const dims = a?.dimensionResults ?? []
+        const sorted = [...dims].sort((x, y) => x.rawScore - y.rawScore)
+        const weakest = sorted.slice(0, 3)
+        const strongest = sorted.slice(-3).reverse()
+        const weakDimIds = dims.filter((d) => d.rawScore < 50).map((d) => d.dimensionId)
+        const fixItCount = weakDimIds.filter((id) =>
+          FIX_IT_MODULES.some((m) => m.dimensionId === id)
+        ).length
+
+        return (
+          <div className="mb-6">
+            <p className="text-xs font-medium text-[#AEAEB2] uppercase tracking-widest mb-3">
+              Latest Project
             </p>
-            <Link href="/assessment/new">
-              <Button size="lg">
-                <Plus className="h-4 w-4" />
-                Assess My First Idea
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      ) : (
+            <div className="bg-white rounded-3xl ring-1 ring-black/[0.06] overflow-hidden">
+              {/* Top bar in verdict color */}
+              {cfg && <div className="h-0.5 w-full" style={{ backgroundColor: cfg.color }} />}
+
+              <div className="p-6 sm:p-8">
+                {/* Title row */}
+                <div className="flex items-start justify-between gap-6 mb-6">
+                  <div className="min-w-0">
+                    <h2 className="text-xl font-semibold text-[#1D1D1F] tracking-tight mb-1 truncate">
+                      {featuredIdea.title}
+                    </h2>
+                    <p className="text-sm text-[#6E6E73]">
+                      {featuredIdea.industry}
+                      {featuredIdea.model ? ` · ${featuredIdea.model}` : ""}
+                    </p>
+                    <p className="text-xs text-[#AEAEB2] mt-1 flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {a?.completedAt
+                        ? `Assessed ${formatDate(a.completedAt)}`
+                        : a
+                        ? "Assessment in progress"
+                        : "Not yet assessed"}
+                    </p>
+                  </div>
+                  {a?.completedAt && a.overallScore != null && cfg ? (
+                    <ScorePill score={a.overallScore} verdict={a.verdict!} />
+                  ) : a ? (
+                    <Badge variant="secondary" className="shrink-0">In Progress</Badge>
+                  ) : (
+                    <Badge variant="outline" className="shrink-0">Draft</Badge>
+                  )}
+                </div>
+
+                {/* Dimension highlights — only if completed */}
+                {a?.completedAt && dims.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 mb-6">
+                    <div>
+                      <p className="text-[11px] font-medium text-[#AEAEB2] uppercase tracking-widest mb-2">Strongest</p>
+                      <div className="space-y-2">
+                        {strongest.map((d) => <DimBar key={d.dimensionId} {...d} />)}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-medium text-[#AEAEB2] uppercase tracking-widest mb-2">Weakest</p>
+                      <div className="space-y-2">
+                        {weakest.map((d) => <DimBar key={d.dimensionId} {...d} />)}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action row */}
+                <div className="flex items-center gap-3 flex-wrap pt-2 border-t border-black/[0.04]">
+                  {a?.completedAt ? (
+                    <>
+                      <Link href={`/assessment/${a.id}/results`}>
+                        <Button size="sm" className="gap-1.5">
+                          <BarChart3 className="h-3.5 w-3.5" />
+                          View Results
+                        </Button>
+                      </Link>
+                      <Link href={`/assessment/${a.id}/checklist`}>
+                        <Button size="sm" variant="outline" className="gap-1.5">
+                          Re-assess
+                        </Button>
+                      </Link>
+                      {fixItCount > 0 && (
+                        <Link href="/fix-it">
+                          <Button size="sm" variant="outline" className="gap-1.5">
+                            <Wrench className="h-3.5 w-3.5" />
+                            Fix-It
+                            <span className="ml-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                              {fixItCount}
+                            </span>
+                          </Button>
+                        </Link>
+                      )}
+                    </>
+                  ) : a ? (
+                    <Link href={`/assessment/${a.id}/checklist`}>
+                      <Button size="sm" className="gap-1.5">
+                        <ArrowRight className="h-3.5 w-3.5" />
+                        Continue Assessment
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link href="/assessment/new">
+                      <Button size="sm" className="gap-1.5">
+                        <Plus className="h-3.5 w-3.5" />
+                        Start Assessment
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+
+      {/* ── All other projects ───────────────────────────────────────────────── */}
+      {otherIdeas.length > 0 && (
         <div>
-          <h2 className="text-lg font-bold text-[#1C0F07] mb-4">Recent Ideas</h2>
-          <div className="space-y-3">
-            {activeIdeas.slice(0, 8).map((idea) => {
-              const latestAssessment = idea.assessments[0]
-              const verdictConfig = latestAssessment?.verdict
-                ? getVerdictConfig(latestAssessment.verdict as any)
-                : null
-              const weakCount = latestAssessment?.dimensionResults?.length ?? 0
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-medium text-[#AEAEB2] uppercase tracking-widest">
+              All Projects
+            </p>
+            <Link href="/ideas" className="text-xs text-[#6E6E73] hover:text-[#1D1D1F] flex items-center gap-1 transition-colors">
+              See all <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {otherIdeas.slice(0, 6).map((idea) => {
+              const a = idea.assessments[0]
+              const cfg = a?.verdict ? getVerdictConfig(a.verdict as any) : null
+              const href = a?.completedAt
+                ? `/assessment/${a.id}/results`
+                : a
+                ? `/assessment/${a.id}/checklist`
+                : `/assessment/new`
 
               return (
-                <Link
-                  key={idea.id}
-                  href={
-                    latestAssessment?.completedAt
-                      ? `/assessment/${latestAssessment.id}/results`
-                      : latestAssessment
-                      ? `/assessment/${latestAssessment.id}/checklist`
-                      : `/assessment/new`
-                  }
-                >
-                  <Card className="hover:border-[#E8A44A]/60 hover:shadow-sm transition-all cursor-pointer">
-                    <CardContent className="p-5">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <h3 className="font-bold text-[#1C0F07] truncate">{idea.title}</h3>
-                            <Badge variant="secondary" className="shrink-0 text-xs">{idea.industry}</Badge>
-                            {weakCount > 0 && (
-                              <Badge variant="amber" className="shrink-0 text-xs">
-                                {weakCount} dimension{weakCount !== 1 ? "s" : ""} to fix
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-[#1C0F07]/55 line-clamp-1">{idea.problem}</p>
-                          <p className="text-xs text-[#1C0F07]/40 mt-1">Updated {formatDate(idea.updatedAt)}</p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          {latestAssessment?.completedAt && latestAssessment.overallScore !== null ? (
-                            <div>
-                              <div
-                                className="text-2xl font-black"
-                                style={{ color: verdictConfig?.color }}
-                              >
-                                {Math.round(latestAssessment.overallScore)}
-                              </div>
-                              <div className={`text-xs font-bold ${verdictConfig?.textColor}`}>
-                                {verdictConfig?.label}
-                              </div>
-                            </div>
-                          ) : latestAssessment ? (
-                            <Badge variant="secondary">In Progress</Badge>
-                          ) : (
-                            <Badge variant="outline">Draft</Badge>
-                          )}
-                        </div>
+                <Link key={idea.id} href={href}>
+                  <div className="bg-white rounded-2xl ring-1 ring-black/[0.06] p-5 hover:shadow-md hover:ring-black/[0.10] transition-all cursor-pointer h-full flex flex-col">
+                    {/* Score line */}
+                    {cfg && a?.overallScore != null && (
+                      <div className="h-0.5 rounded-full mb-4" style={{ backgroundColor: cfg.color, width: `${a.overallScore}%` }} />
+                    )}
+
+                    <div className="flex items-start justify-between gap-3 flex-1">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-sm font-semibold text-[#1D1D1F] line-clamp-2 leading-snug mb-1">
+                          {idea.title}
+                        </h3>
+                        <p className="text-xs text-[#AEAEB2] truncate">{idea.industry}</p>
                       </div>
-                    </CardContent>
-                  </Card>
+                      <div className="shrink-0 text-right">
+                        {a?.completedAt && a.overallScore != null && cfg ? (
+                          <div>
+                            <div className="text-xl font-bold tracking-tight" style={{ color: cfg.color }}>
+                              {Math.round(a.overallScore)}
+                            </div>
+                            <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: cfg.color }}>
+                              {cfg.label}
+                            </div>
+                          </div>
+                        ) : a ? (
+                          <span className="text-[11px] font-medium text-[#AEAEB2]">In Progress</span>
+                        ) : (
+                          <span className="text-[11px] font-medium text-[#AEAEB2]">Draft</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <p className="text-[11px] text-[#AEAEB2] mt-3 flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {formatDate(idea.updatedAt)}
+                    </p>
+                  </div>
                 </Link>
               )
             })}
           </div>
-          {activeIdeas.length > 8 && (
-            <div className="mt-4 text-center">
-              <Link href="/ideas">
-                <Button variant="outline" size="sm">
-                  View all {activeIdeas.length} ideas
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
-            </div>
-          )}
         </div>
       )}
+
     </div>
   )
 }

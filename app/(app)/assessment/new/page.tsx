@@ -90,6 +90,11 @@ function NewAssessmentForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ideaId: idea.id }),
       })
+      if (assessmentRes.status === 402) {
+        toast.error("You've used all 10 free assessments. Upgrade to Founder Pro for unlimited.")
+        setLoading(false)
+        return
+      }
       if (!assessmentRes.ok) throw new Error("Failed to create assessment")
       const assessment = await assessmentRes.json()
 
