@@ -102,10 +102,24 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
   async function saveAnswer(dimensionId: number, itemId: string, answer: AnswerValue) {
     const key = `${dimensionId}-${itemId}`
     setSaving(key)
-    setAllAnswers((prev) => ({
-      ...prev,
-      [dimensionId]: { ...(prev[dimensionId] ?? {}), [itemId]: answer },
-    }))
+
+    const newDimAnswers = { ...(allAnswers[dimensionId] ?? {}), [itemId]: answer }
+    const newAllAnswers = { ...allAnswers, [dimensionId]: newDimAnswers }
+    setAllAnswers(newAllAnswers)
+
+    // Auto-advance to next dimension when this one is complete
+    const dimension = DIMENSIONS.find((d) => d.id === dimensionId)
+    const justCompleted = dimension && Object.keys(newDimAnswers).length === dimension.items.length
+    if (justCompleted) {
+      const nextDim = DIMENSIONS.find((d) => d.id === dimensionId + 1)
+      if (nextDim) {
+        setTimeout(() => {
+          setActiveDimension(nextDim.id)
+          document.getElementById(`dim-${nextDim.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
+        }, 400)
+      }
+    }
+
     try {
       await fetch(`/api/assessments/${assessmentId}/answers`, {
         method: "POST",
@@ -214,6 +228,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
             return (
               <Card
                 key={dimension.id}
+                id={`dim-${dimension.id}`}
                 className={cn(
                   "overflow-hidden transition-shadow",
                   hasKillFlag ? "border-red-300" : "",
