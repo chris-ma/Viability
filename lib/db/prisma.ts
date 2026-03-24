@@ -2,7 +2,11 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL;
+  // Replace insecure sslmode aliases with verify-full to silence pg-connection-string warning
+  const connectionString = (process.env.DATABASE_URL ?? "").replace(
+    /sslmode=(prefer|require|verify-ca)/,
+    "sslmode=verify-full"
+  );
   const adapter = new PrismaPg({ connectionString });
   return new PrismaClient({
     adapter,

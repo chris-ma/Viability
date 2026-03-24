@@ -1,4 +1,5 @@
 "use client"
+import { useState, useEffect } from "react"
 import {
   Radar,
   RadarChart,
@@ -23,6 +24,9 @@ const VERDICT_COLORS = {
 }
 
 export function LiveRadarPreview({ scoringResult, completionPercentage }: LiveRadarPreviewProps) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   const color = scoringResult
     ? VERDICT_COLORS[scoringResult.verdict]
     : VERDICT_COLORS.default
@@ -59,23 +63,27 @@ export function LiveRadarPreview({ scoringResult, completionPercentage }: LiveRa
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={200}>
-        <RadarChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 20 }}>
-          <PolarGrid stroke="#e5e7eb" />
-          <PolarAngleAxis
-            dataKey="dimension"
-            tick={{ fontSize: 8, fill: "#9ca3af" }}
-          />
-          <Radar
-            name="Score"
-            dataKey="score"
-            stroke={color}
-            fill={color}
-            fillOpacity={0.2}
-            strokeWidth={1.5}
-          />
-        </RadarChart>
-      </ResponsiveContainer>
+      {mounted ? (
+        <ResponsiveContainer width="100%" height={200}>
+          <RadarChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 20 }}>
+            <PolarGrid stroke="#e5e7eb" />
+            <PolarAngleAxis
+              dataKey="dimension"
+              tick={{ fontSize: 8, fill: "#9ca3af" }}
+            />
+            <Radar
+              name="Score"
+              dataKey="score"
+              stroke={color}
+              fill={color}
+              fillOpacity={0.2}
+              strokeWidth={1.5}
+            />
+          </RadarChart>
+        </ResponsiveContainer>
+      ) : (
+        <div style={{ height: 200 }} />
+      )}
 
       {scoringResult && (
         <div className="mt-2 text-center">
