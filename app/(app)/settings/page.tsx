@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { UserButton } from "@clerk/nextjs"
+import { UserButton, SignOutButton } from "@clerk/nextjs"
 import {
   Lightbulb,
   BarChart3,
@@ -22,6 +22,7 @@ import {
   Trash2,
   Download,
   ArrowRight,
+  LogOut,
 } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 
@@ -314,7 +315,21 @@ export default async function SettingsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-start justify-between gap-4">
+          {/* Sign out */}
+        <div className="flex items-center justify-between py-2">
+          <div>
+            <p className="text-sm font-semibold text-[#1D1D1F]">Sign out</p>
+            <p className="text-xs text-[#6E6E73] mt-0.5">Sign out of your account on this device</p>
+          </div>
+          <SignOutButton redirectUrl="/">
+            <Button variant="outline" size="sm" className="gap-1.5 shrink-0">
+              <LogOut className="h-3.5 w-3.5" />
+              Sign out
+            </Button>
+          </SignOutButton>
+        </div>
+        <Separator />
+        <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-[#1D1D1F]">Delete account</p>
               <p className="text-xs text-[#1D1D1F]/55 mt-0.5 max-w-xs">

@@ -23,6 +23,8 @@ import {
   Clock,
   ExternalLink,
   Archive,
+  CheckCircle2,
+  ChevronRight,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { formatDate } from "@/lib/utils"
@@ -53,6 +55,131 @@ interface ResultsClientProps {
   dimensionScores: DimensionScore[]
   killFlags: KillFlag[]
   previousScores?: Array<{ dimensionId: number; rawScore: number }> | null
+}
+
+// ── Action Plan component ───────────────────────────────────────────────────
+
+const VERDICT_PLANS = {
+  VIABLE: {
+    headline: "You're ready to build.",
+    color: "#22c55e",
+    bg: "bg-green-50",
+    border: "border-green-200",
+    steps: [
+      { icon: "🎯", title: "Define your MVP scope", body: "List the minimum set of features needed to deliver value to your first 10 customers. Cut everything else." },
+      { icon: "👥", title: "Get 10 paying users in 30 days", body: "Don't build more — sell first. Use your existing network and direct outreach to find your first paying customers before writing another line of code." },
+      { icon: "📅", title: "Set a 90-day launch milestone", body: "Work backwards from a public launch date. Define what 'done' looks like and ship it. Momentum beats perfection." },
+    ],
+  },
+  PROMISING: {
+    headline: "Strong foundations — close the gaps first.",
+    color: "#f59e0b",
+    bg: "bg-amber-50",
+    border: "border-amber-200",
+    steps: [
+      { icon: "🔧", title: "Work the Fix-It modules below", body: "Each module has specific tasks to close the gap. Complete them before writing code — they take days, not months." },
+      { icon: "🔁", title: "Re-assess after fixing your weakest dimension", body: "Once you've completed a Fix-It module, come back and re-assess that dimension. Use score improvement as your signal to proceed." },
+      { icon: "💬", title: "Validate with 5 real conversations", body: "Book 5 customer discovery calls this week. Your goal: confirm people have this problem badly enough to pay. Use the Mom Test — ask about past behaviour, not future intentions." },
+    ],
+  },
+  NEEDS_WORK: {
+    headline: "Serious gaps — don't build yet.",
+    color: "#f97316",
+    bg: "bg-orange-50",
+    border: "border-orange-200",
+    steps: [
+      { icon: "🛑", title: "Pause any building or spending", body: "Do not hire, build, or invest further until you've addressed the red dimensions. Every pound spent now is likely wasted." },
+      { icon: "🔧", title: "Prioritise your lowest-scoring dimension", body: "Start with your single lowest score. Use its Fix-It module to generate evidence. One gap at a time." },
+      { icon: "🔄", title: "Consider a fundamental pivot", body: "If market need or business model are below 40%, question the core assumption. Who else has this problem? What business model have others used successfully?" },
+    ],
+  },
+  NOT_VIABLE: {
+    headline: "Fundamental issues — pivot or move on.",
+    color: "#ef4444",
+    bg: "bg-red-50",
+    border: "border-red-200",
+    steps: [
+      { icon: "📋", title: "Write down your core assumption", body: "What is the single biggest bet this idea rests on? Is it the customer, the problem, the distribution, or the model? Changing one of these is a pivot — and often leads to something better." },
+      { icon: "🔄", title: "Run a pivot exercise", body: "Keep your solution but change the customer. Or keep the customer but change the problem you solve. Use the 'same team, different idea' framework and run a new assessment." },
+      { icon: "💡", title: "Start a new assessment", body: "The fastest way to find a viable idea is to test many quickly. Every failed assessment builds your instincts. Start fresh with what you've learned." },
+    ],
+  },
+}
+
+function ActionPlan({
+  verdict,
+  score,
+  dimensionScores,
+  assessmentId,
+  fixItModules,
+}: {
+  verdict: string
+  score: number
+  dimensionScores: DimensionScore[]
+  assessmentId: string
+  fixItModules: Array<{ dimensionId: number; title: string } | null>
+}) {
+  const plan = VERDICT_PLANS[verdict as keyof typeof VERDICT_PLANS]
+  if (!plan) return null
+
+  const weakest = [...dimensionScores].sort((a, b) => a.rawScore - b.rawScore).slice(0, 3)
+
+  return (
+    <div className={`rounded-2xl border p-5 sm:p-6 ${plan.bg} ${plan.border}`}>
+      <div className="flex items-center gap-2.5 mb-4">
+        <div className="w-2 h-2 rounded-full shrink-0" style={{ background: plan.color }} />
+        <h2 className="text-base font-bold text-[#1D1D1F]">What to do now — {plan.headline}</h2>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+        {plan.steps.map((step, i) => (
+          <div key={i} className="bg-white/80 rounded-xl p-4 flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">{step.icon}</span>
+              <p className="text-sm font-semibold text-[#1D1D1F] leading-tight">{step.title}</p>
+            </div>
+            <p className="text-xs text-[#6E6E73] leading-relaxed">{step.body}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Priority dimensions for non-viable results */}
+      {(verdict === "PROMISING" || verdict === "NEEDS_WORK") && weakest.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-[#6E6E73] uppercase tracking-wider mb-2">Fix these first →</p>
+          <div className="flex flex-wrap gap-2">
+            {weakest.map((d) => (
+              <a
+                key={d.dimensionId}
+                href={`#fixit-${d.dimensionId}`}
+                className="inline-flex items-center gap-1.5 bg-white rounded-lg px-3 py-1.5 text-xs font-medium text-[#1D1D1F] hover:shadow-sm transition-shadow border border-black/[0.06]"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
+                {d.name} · {Math.round(d.rawScore)}%
+                <ChevronRight className="h-3 w-3 text-[#AEAEB2]" />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {verdict === "VIABLE" && (
+        <div className="flex flex-wrap gap-2">
+          <Link href="/assessment/new">
+            <button className="inline-flex items-center gap-1.5 bg-white rounded-lg px-3 py-1.5 text-xs font-medium text-[#1D1D1F] hover:shadow-sm transition-shadow border border-black/[0.06]">
+              <span className="text-green-500">✓</span> Test another idea
+              <ChevronRight className="h-3 w-3 text-[#AEAEB2]" />
+            </button>
+          </Link>
+          <Link href={`/assessment/${assessmentId}/checklist`}>
+            <button className="inline-flex items-center gap-1.5 bg-white rounded-lg px-3 py-1.5 text-xs font-medium text-[#1D1D1F] hover:shadow-sm transition-shadow border border-black/[0.06]">
+              Re-assess after progress
+              <ChevronRight className="h-3 w-3 text-[#AEAEB2]" />
+            </button>
+          </Link>
+        </div>
+      )}
+    </div>
+  )
 }
 
 const fadeUp = {
@@ -109,6 +236,17 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
         </div>
         <h1 className="text-3xl font-black text-[#1D1D1F] mb-1">{assessment.idea.title}</h1>
         <p className="text-[#1D1D1F]/55 text-sm">{assessment.idea.industry} · {assessment.idea.model}</p>
+      </motion.div>
+
+      {/* ── What to do now ─────────────────────────────────────────────── */}
+      <motion.div className="mb-6" {...fadeUp}>
+        <ActionPlan
+          verdict={assessment.verdict}
+          score={assessment.overallScore}
+          dimensionScores={dimensionScores}
+          assessmentId={assessment.id}
+          fixItModules={fixItModules}
+        />
       </motion.div>
 
       {/* Kill Flags Banner */}
@@ -268,9 +406,18 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
                               <p className="text-sm font-semibold text-[#1D1D1F]">{task.title}</p>
                               <p className="text-xs text-[#1D1D1F]/55 mt-0.5">{task.description}</p>
                               {task.resource && (
-                                <div className="flex items-center gap-1 mt-0.5">
-                                  <ExternalLink className="h-3 w-3 text-blue-500" />
-                                  <p className="text-xs text-blue-600">{task.resource}</p>
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                  {task.resource.split(",").map((r) => {
+                                    const site = r.trim()
+                                    const url = site.startsWith("http") ? site : `https://${site}`
+                                    return (
+                                      <a key={site} href={url} target="_blank" rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 text-xs text-[#0071E3] hover:underline">
+                                        <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                                        {site}
+                                      </a>
+                                    )
+                                  })}
                                 </div>
                               )}
                             </div>

@@ -156,9 +156,18 @@ export function FixItClient({ modules }: { modules: ActiveModule[] }) {
                             <p className="text-xs text-[#1D1D1F]/55 mt-0.5">{task.description}</p>
                           )}
                           {task.resource && !done && (
-                            <div className="flex items-center gap-1 mt-1">
-                              <ExternalLink className="h-3 w-3 text-blue-500 shrink-0" />
-                              <span className="text-xs text-[#6E6E73]">{task.resource}</span>
+                            <div className="flex flex-wrap gap-1.5 mt-1">
+                              {task.resource.split(",").map((r) => {
+                                const site = r.trim()
+                                const url = site.startsWith("http") ? site : `https://${site}`
+                                return (
+                                  <a key={site} href={url} target="_blank" rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-xs text-[#0071E3] hover:underline">
+                                    <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                                    {site}
+                                  </a>
+                                )
+                              })}
                             </div>
                           )}
                         </div>
