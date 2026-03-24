@@ -39,7 +39,7 @@ export function AppNav() {
             <Plus className="h-3 w-3" />
             New
           </Link>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
       </header>
 
@@ -91,7 +91,7 @@ export function AppNav() {
           </Link>
           <div className="flex items-center justify-between pt-1">
             <div className="flex items-center gap-2.5">
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
               <Link href="/settings" className="text-sm text-[#6E6E73] hover:text-[#1D1D1F] transition-colors">Account</Link>
             </div>
             <SignOutButton redirectUrl="/">

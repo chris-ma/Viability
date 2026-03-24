@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { ViabilityRadarChart, buildRadarData } from "@/components/charts/radar-chart"
 import { ScoreGauge } from "@/components/charts/score-gauge"
 import { DimensionBars } from "@/components/charts/dimension-bars"
-import { FIX_IT_MODULES } from "@/lib/data/fix-it-modules"
+import { FIX_IT_MODULES, type FixItModuleData } from "@/lib/data/fix-it-modules"
 import { getVerdictConfig } from "@/lib/scoring/engine"
 import type { DimensionScore, KillFlag, ScoringResult } from "@/lib/scoring/engine"
 import {
@@ -117,7 +117,7 @@ function ActionPlan({
   score: number
   dimensionScores: DimensionScore[]
   assessmentId: string
-  fixItModules: Array<{ dimensionId: number; title: string } | null>
+  fixItModules: FixItModuleData[]
 }) {
   const plan = VERDICT_PLANS[verdict as keyof typeof VERDICT_PLANS]
   if (!plan) return null
@@ -199,7 +199,7 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
   const weakDimensions = dimensionScores.filter((d) => d.rawScore < 50)
   const fixItModules = weakDimensions
     .map((d) => FIX_IT_MODULES.find((m) => m.dimensionId === d.dimensionId))
-    .filter(Boolean)
+    .filter((m): m is FixItModuleData => m !== undefined)
 
   const isKillVerdict = assessment.verdict === "NOT_VIABLE"
   const multipleKillFlags = killFlags.length >= 3
