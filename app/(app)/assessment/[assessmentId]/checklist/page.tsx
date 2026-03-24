@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, use } from "react"
+import { useState, useEffect, use, useCallback, useTransition, memo } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,6 +11,7 @@ import type { ScoringResult, AnswerValue } from "@/lib/scoring/engine"
 import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Send, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
 
 type AllAnswers = Record<number, Record<string, AnswerValue>>
 
@@ -21,7 +22,7 @@ const ANSWER_OPTIONS: Array<{ value: AnswerValue; label: string; description: st
   { value: "dont_know",  label: "Don't Know", description: "Unvalidated",      color: "border-[#D2D2D7] bg-[#F5F5F7] text-[#6E6E73]" },
 ]
 
-function AnswerButton({
+const AnswerButton = memo(function AnswerButton({
   option,
   selected,
   onClick,
@@ -42,7 +43,7 @@ function AnswerButton({
       <div className="text-xs opacity-70 hidden sm:block">{option.description}</div>
     </button>
   )
-}
+})
 
 export default function ChecklistPage({ params }: { params: Promise<{ assessmentId: string }> }) {
   const router = useRouter()
@@ -55,6 +56,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState<string | null>(null)
   const [assessmentTitle, setAssessmentTitle] = useState("")
+  const [, startScoreTransition] = useTransition()
 
   // Load existing answers
   useEffect(() => {
@@ -82,10 +84,12 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
     load()
   }, [assessmentId])
 
-  // Recalculate score whenever answers change
+  // Recalculate score whenever answers change (deferred so it doesn't block UI)
   useEffect(() => {
     if (Object.keys(allAnswers).length > 0) {
-      setScoringResult(calculateScores(allAnswers))
+      startScoreTransition(() => {
+        setScoringResult(calculateScores(allAnswers))
+      })
     }
   }, [allAnswers])
 
@@ -99,7 +103,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
     (d) => Object.keys(allAnswers[d.id] ?? {}).length === d.items.length
   ).length
 
-  async function saveAnswer(dimensionId: number, itemId: string, answer: AnswerValue) {
+  const saveAnswer = useCallback(async function saveAnswer(dimensionId: number, itemId: string, answer: AnswerValue) {
     const key = `${dimensionId}-${itemId}`
     setSaving(key)
 
@@ -131,7 +135,7 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
     } finally {
       setSaving(null)
     }
-  }
+  }, [allAnswers, assessmentId])
 
   async function handleSubmit() {
     if (totalAnswered < totalItems * 0.5) {
@@ -294,14 +298,26 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                     </div>
                   )}
 
-                  {isActive
-                    ? <ChevronDown className="h-4 w-4 text-[#1D1D1F]/40 shrink-0" />
-                    : <ChevronRight className="h-4 w-4 text-[#1D1D1F]/40 shrink-0" />
-                  }
+                  <motion.div
+                    animate={{ rotate: isActive ? 90 : 0 }}
+                    transition={{ duration: 0.18, ease: "easeInOut" }}
+                    className="shrink-0"
+                  >
+                    <ChevronRight className="h-4 w-4 text-[#1D1D1F]/40" />
+                  </motion.div>
                 </button>
 
                 {/* Questions */}
+                <AnimatePresence initial={false}>
                 {isActive && (
+                  <motion.div
+                    key="content"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                    style={{ overflow: "hidden" }}
+                  >
                   <div className="border-t border-[#E8E8ED]/60">
                     {dimension.items.map((item, idx) => {
                       const currentAnswer = dimAnswers[item.id]
@@ -365,7 +381,9 @@ export default function ChecklistPage({ params }: { params: Promise<{ assessment
                       </div>
                     )}
                   </div>
+                  </motion.div>
                 )}
+                </AnimatePresence>
               </Card>
             )
           })}
