@@ -154,20 +154,20 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-white">
 
       {/* ── Nav ────────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-black/[0.06]">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-black/[0.05]">
         <div className="max-w-6xl mx-auto px-5 sm:px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-[#1D1D1F] rounded-lg flex items-center justify-center">
-              <span className="text-white text-xs font-bold">V</span>
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-[#1D1D1F] rounded-lg flex items-center justify-center shadow-sm">
+              <span className="text-white text-xs font-bold tracking-tight">V</span>
             </div>
             <span className="font-semibold text-[15px] text-[#1D1D1F] tracking-tight">Viability First</span>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Link href="/sign-in">
               <Button variant="ghost" size="sm" className="text-[#6E6E73] hover:text-[#1D1D1F] px-3">Sign in</Button>
             </Link>
             <Link href="/sign-up">
-              <Button size="sm" className="bg-[#1D1D1F] text-white hover:bg-black rounded-full px-4">
+              <Button size="sm" className="rounded-full px-4 shadow-sm">
                 Get Started
               </Button>
             </Link>
@@ -176,12 +176,16 @@ export default async function LandingPage() {
       </header>
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
-      <section className="pt-16 sm:pt-24 pb-10 sm:pb-12 px-5 sm:px-6">
+      <section className="relative pt-16 sm:pt-24 pb-10 sm:pb-12 px-5 sm:px-6 overflow-hidden">
+        {/* Radial glow background */}
+        <div className="pointer-events-none absolute inset-0 -z-0" aria-hidden>
+          <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[900px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(0,113,227,0.06)_0%,transparent_70%)]" />
+        </div>
         <HeroAnimations />
-        <div className="max-w-6xl mx-auto">
+        <div className="relative max-w-6xl mx-auto">
           <div className="text-center mb-10 sm:mb-14">
-            <div id="hero-badge" className="inline-flex items-center gap-2 bg-[#F5F5F7] rounded-full px-3.5 py-1.5 mb-6 sm:mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+            <div id="hero-badge" className="inline-flex items-center gap-2 bg-[#F5F5F7] rounded-full px-3.5 py-1.5 mb-6 sm:mb-8 ring-1 ring-black/[0.06]">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0 animate-pulse-dot" />
               <span className="text-[12px] sm:text-[13px] text-[#6E6E73] font-medium">Free to start · No credit card</span>
             </div>
 
@@ -190,7 +194,7 @@ export default async function LandingPage() {
                 <span key={w} className="gsap-hero-word inline-block">{w}&nbsp;</span>
               ))}
               <br />
-              <span className="text-[#6E6E73]">
+              <span className="gradient-text">
                 {["is", "worth", "building."].map((w, i, arr) => (
                   <span key={w} className="gsap-hero-word inline-block">{w}{i < arr.length - 1 ? "\u00A0" : ""}</span>
                 ))}
@@ -206,42 +210,46 @@ export default async function LandingPage() {
 
             <div id="hero-ctas" className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link href="/sign-up" className="w-full sm:w-auto">
-                <Button size="xl" className="w-full sm:w-auto bg-[#1D1D1F] text-white hover:bg-black rounded-2xl shadow-lg text-base">
+                <Button size="xl" className="w-full sm:w-auto rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.18)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.22)] text-base">
                   Assess My Idea Free
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/demo" className="w-full sm:w-auto">
-                <Button size="xl" variant="outline" className="w-full sm:w-auto rounded-2xl border-[#D2D2D7] text-[#1D1D1F] hover:bg-[#F5F5F7] text-base">
+                <Button size="xl" variant="outline" className="w-full sm:w-auto rounded-2xl text-base hover:-translate-y-px transition-all duration-200">
                   View Demo
                 </Button>
               </Link>
             </div>
           </div>
 
-          <div id="hero-mockup">
+          <div id="hero-mockup" className="drop-shadow-2xl">
             <AppMockup />
           </div>
         </div>
       </section>
 
       {/* ── Stats ──────────────────────────────────────────────────────────── */}
-      <section className="py-14 sm:py-20 bg-[#1D1D1F]">
+      <section className="relative py-14 sm:py-20 bg-[#1D1D1F] overflow-hidden">
+        {/* Subtle gradient overlay */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+        </div>
         <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
-            <p className="text-center text-xs font-semibold mb-12 uppercase tracking-widest text-white/30">
+            <p className="text-center text-[11px] font-bold mb-12 uppercase tracking-[0.18em] text-white/25">
               Why most startups fail — and why you need this before you build
             </p>
           </AnimatedSection>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x lg:divide-white/[0.06]">
             {STATS.map((stat, i) => (
               <AnimatedSection key={i} delay={i * 0.08}>
-                <div className="text-center">
-                  <div className="text-5xl font-bold mb-2 text-white tracking-tight">
+                <div className="text-center lg:px-8">
+                  <div className="text-[52px] sm:text-6xl font-black mb-1.5 text-white tracking-tight tabular-nums leading-none">
                     <StatCounter value={stat.numeric} suffix={stat.suffix} />
-                    <sup className="text-sm text-white/30 ml-0.5">[{stat.footnote}]</sup>
+                    <sup className="text-sm font-normal text-white/20 ml-0.5">[{stat.footnote}]</sup>
                   </div>
-                  <div className="text-sm text-white/50">{stat.label}</div>
+                  <div className="text-sm text-white/40 leading-snug">{stat.label}</div>
                 </div>
               </AnimatedSection>
             ))}
@@ -270,40 +278,46 @@ export default async function LandingPage() {
         <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
             <div className="text-center mb-10 sm:mb-16">
-              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">How it works</h2>
-              <p className="text-lg text-[#6E6E73]">Three steps. Thirty minutes. An honest answer.</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#AEAEB2] mb-3">How it works</p>
+              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">Three steps to clarity</h2>
+              <p className="text-lg text-[#6E6E73]">Thirty minutes. An honest answer.</p>
             </div>
           </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               {
                 step: "01",
-                icon: <Target className="h-6 w-6 text-[#1D1D1F]" />,
+                icon: <Target className="h-5 w-5 text-[#1D1D1F]" />,
                 title: "Describe your idea",
                 desc: "Tell us your concept, the problem it solves, and the industry. Five minutes, no pressure.",
               },
               {
                 step: "02",
-                icon: <CheckCircle2 className="h-6 w-6 text-[#1D1D1F]" />,
+                icon: <CheckCircle2 className="h-5 w-5 text-[#1D1D1F]" />,
                 title: "Work through the checklist",
                 desc: "Answer 40+ evidence-based questions across 8 viability dimensions. Be honest — the tool is on your side.",
               },
               {
                 step: "03",
-                icon: <BarChart3 className="h-6 w-6 text-[#1D1D1F]" />,
+                icon: <BarChart3 className="h-5 w-5 text-[#1D1D1F]" />,
                 title: "Get your verdict",
                 desc: "Receive a Viability Score, radar chart, and targeted Fix-It action plans for every weak spot.",
               },
             ].map((step, i) => (
               <AnimatedSection key={step.step} delay={i * 0.1}>
-                <div className="bg-white rounded-2xl p-8 h-full shadow-sm ring-1 ring-black/[0.06] relative overflow-hidden">
-                  <span className="absolute -top-2 -right-1 text-7xl font-bold text-[#F5F5F7] select-none leading-none">
+                <div className="group bg-white rounded-2xl p-7 h-full shadow-[0_1px_3px_rgba(0,0,0,0.07),0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.05] relative overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300">
+                  <span className="absolute -top-3 -right-1 text-[88px] font-black text-[#F5F5F7] select-none leading-none">
                     {step.step}
                   </span>
-                  <div className="w-11 h-11 rounded-xl bg-[#F5F5F7] flex items-center justify-center mb-5 relative">
-                    {step.icon}
+                  {/* Step indicator */}
+                  <div className="flex items-center gap-3 mb-5 relative">
+                    <div className="w-9 h-9 rounded-xl bg-[#1D1D1F] flex items-center justify-center shadow-sm">
+                      <span className="text-white">{step.icon}</span>
+                    </div>
+                    <div className="flex-1 h-px bg-[#E8E8ED]" />
+                    <span className="text-[11px] font-bold text-[#AEAEB2] tracking-wide">{step.step}</span>
                   </div>
-                  <h3 className="text-[17px] font-semibold text-[#1D1D1F] mb-2.5 relative">{step.title}</h3>
+                  <h3 className="text-[16px] font-semibold text-[#1D1D1F] mb-2 relative">{step.title}</h3>
                   <p className="text-sm text-[#6E6E73] leading-relaxed relative">{step.desc}</p>
                 </div>
               </AnimatedSection>
@@ -317,6 +331,7 @@ export default async function LandingPage() {
         <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
             <div className="text-center mb-10 sm:mb-16">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#AEAEB2] mb-3">The Framework</p>
               <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">8 Viability Dimensions</h2>
               <p className="text-lg text-[#6E6E73]">Each weighted by its empirical correlation to startup failure</p>
             </div>
@@ -326,12 +341,15 @@ export default async function LandingPage() {
               const Icon = d.icon
               return (
                 <AnimatedSection key={i} delay={i * 0.06}>
-                  <div className="bg-[#F5F5F7] rounded-2xl p-5 h-full hover:bg-white hover:shadow-md hover:ring-1 hover:ring-black/[0.06] transition-all">
-                    <div className="w-9 h-9 rounded-xl bg-white shadow-sm ring-1 ring-black/[0.06] flex items-center justify-center mb-3">
-                      <Icon className="h-4.5 w-4.5 text-[#1D1D1F]" style={{ width: 18, height: 18 }} />
+                  <div className="group relative bg-[#F5F5F7] rounded-2xl p-5 h-full hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:ring-1 hover:ring-black/[0.06] hover:-translate-y-0.5 transition-all duration-250 cursor-default">
+                    <div className="w-10 h-10 rounded-xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.06] flex items-center justify-center mb-3.5 group-hover:shadow-[0_4px_8px_rgba(0,0,0,0.10)] transition-shadow duration-250">
+                      <Icon style={{ width: 18, height: 18 }} className="text-[#1D1D1F]" />
                     </div>
-                    <div className="text-sm font-semibold text-[#1D1D1F] mb-1">{d.name}</div>
-                    <div className="text-xs text-[#AEAEB2]">Weight: <span className="font-semibold text-[#6E6E73]">{d.weight}</span></div>
+                    <div className="text-[13px] font-semibold text-[#1D1D1F] mb-1.5 leading-snug">{d.name}</div>
+                    <div className="inline-flex items-center gap-1 bg-[#E8E8ED] group-hover:bg-[#F5F5F7] rounded-full px-2 py-0.5 transition-colors">
+                      <span className="text-[11px] text-[#6E6E73]">Weight</span>
+                      <span className="text-[11px] font-bold text-[#1D1D1F]">{d.weight}</span>
+                    </div>
                   </div>
                 </AnimatedSection>
               )
@@ -345,22 +363,34 @@ export default async function LandingPage() {
         <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
             <div className="text-center mb-10 sm:mb-16">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#AEAEB2] mb-3">Your Result</p>
               <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-4">Clear verdicts. No fluff.</h2>
               <p className="text-lg text-[#6E6E73] max-w-xl mx-auto">
                 We&apos;ll tell you exactly where you stand — even if that means pivoting. That&apos;s not failure, that&apos;s wisdom.
               </p>
             </div>
           </AnimatedSection>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {VERDICTS.map((v, i) => (
               <AnimatedSection key={v.label} delay={i * 0.08}>
-                <div className="bg-white rounded-2xl p-7 h-full shadow-sm ring-1 ring-black/[0.06]"
-                  style={{ borderLeft: `3px solid ${v.color}` }}>
-                  <div className="flex items-baseline gap-3 mb-3">
-                    <span className="text-2xl font-bold text-[#AEAEB2]">{v.score}</span>
-                    <span className="text-lg font-bold tracking-wide" style={{ color: v.color }}>{v.label}</span>
+                <div
+                  className="bg-white rounded-2xl p-6 h-full shadow-[0_1px_3px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.05] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 overflow-hidden relative"
+                  style={{ borderLeft: `4px solid ${v.color}` }}
+                >
+                  {/* Subtle tinted bg */}
+                  <div className="absolute inset-0 opacity-[0.03]" style={{ background: v.color }} />
+                  <div className="relative">
+                    <div className="flex items-center gap-3 mb-2.5">
+                      <span
+                        className="text-xs font-black tracking-widest px-2.5 py-1 rounded-full"
+                        style={{ color: v.color, background: `${v.color}18` }}
+                      >
+                        {v.label}
+                      </span>
+                      <span className="text-sm font-semibold text-[#AEAEB2]">{v.score}</span>
+                    </div>
+                    <p className="text-sm text-[#6E6E73] leading-relaxed">{v.desc}</p>
                   </div>
-                  <p className="text-sm text-[#6E6E73] leading-relaxed">{v.desc}</p>
                 </div>
               </AnimatedSection>
             ))}
@@ -433,11 +463,12 @@ export default async function LandingPage() {
         <div className="max-w-5xl mx-auto px-5 sm:px-6">
           <AnimatedSection>
             <div className="text-center mb-10 sm:mb-16">
-              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-3">Simple pricing</h2>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#AEAEB2] mb-3">Pricing</p>
+              <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-3">Simple, honest pricing</h2>
               <p className="text-lg text-[#6E6E73]">Start free. Upgrade when you&apos;re ready to go deeper.</p>
             </div>
           </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
             {[
               {
                 plan: "Free",
@@ -471,42 +502,56 @@ export default async function LandingPage() {
               },
             ].map((plan, i) => (
               <AnimatedSection key={plan.plan} delay={i * 0.1}>
-                <div className={`rounded-2xl p-8 h-full flex flex-col ${
-                  plan.highlight
-                    ? "bg-[#1D1D1F] shadow-xl"
-                    : "bg-[#F5F5F7]"
-                }`}>
-                  <div className={`text-sm font-semibold mb-2 ${plan.highlight ? "text-white/50" : "text-[#6E6E73]"}`}>
-                    {plan.plan}
+                {plan.highlight ? (
+                  /* Featured plan — dark card with glow ring */
+                  <div className="relative rounded-2xl bg-[#1D1D1F] p-8 flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.25)] ring-1 ring-white/[0.08] -mt-2 sm:-mt-4">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="inline-flex items-center bg-white text-[#1D1D1F] text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                        Most Popular
+                      </span>
+                    </div>
+                    <div className="text-sm font-semibold mb-2 text-white/50">{plan.plan}</div>
+                    <div className="flex items-baseline gap-1 mb-1">
+                      <span className="text-5xl font-black tracking-tight text-white">{plan.price}</span>
+                      <span className="text-sm text-white/30">/{plan.period}</span>
+                    </div>
+                    <p className="text-sm mb-7 text-white/40">{plan.desc}</p>
+                    <div className="space-y-3 mb-8 flex-1">
+                      {plan.features.map((f) => (
+                        <div key={f} className="flex items-center gap-2.5">
+                          <CheckCircle2 className="h-4 w-4 shrink-0 text-white/40" />
+                          <span className="text-sm text-white/70">{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <Link href={plan.href}>
+                      <Button className="w-full rounded-xl bg-white text-[#1D1D1F] hover:bg-white/90 shadow-sm" size="lg">
+                        {plan.cta}
+                      </Button>
+                    </Link>
                   </div>
-                  <div className="flex items-baseline gap-1 mb-1">
-                    <span className={`text-4xl font-bold tracking-tight ${plan.highlight ? "text-white" : "text-[#1D1D1F]"}`}>
-                      {plan.price}
-                    </span>
-                    <span className={`text-sm ${plan.highlight ? "text-white/30" : "text-[#AEAEB2]"}`}>/{plan.period}</span>
+                ) : (
+                  /* Standard plan */
+                  <div className="rounded-2xl bg-[#F5F5F7] p-8 flex flex-col ring-1 ring-black/[0.04]">
+                    <div className="text-sm font-semibold mb-2 text-[#6E6E73]">{plan.plan}</div>
+                    <div className="flex items-baseline gap-1 mb-1">
+                      <span className="text-4xl font-bold tracking-tight text-[#1D1D1F]">{plan.price}</span>
+                      <span className="text-sm text-[#AEAEB2]">/{plan.period}</span>
+                    </div>
+                    <p className="text-sm mb-7 text-[#6E6E73]">{plan.desc}</p>
+                    <div className="space-y-3 mb-8 flex-1">
+                      {plan.features.map((f) => (
+                        <div key={f} className="flex items-center gap-2.5">
+                          <CheckCircle2 className="h-4 w-4 shrink-0 text-[#AEAEB2]" />
+                          <span className="text-sm text-[#6E6E73]">{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <Link href={plan.href}>
+                      <Button className="w-full rounded-xl" size="lg">{plan.cta}</Button>
+                    </Link>
                   </div>
-                  <p className={`text-sm mb-7 ${plan.highlight ? "text-white/40" : "text-[#6E6E73]"}`}>{plan.desc}</p>
-                  <div className="space-y-3 mb-8 flex-1">
-                    {plan.features.map((f) => (
-                      <div key={f} className="flex items-center gap-2.5">
-                        <CheckCircle2 className={`h-4 w-4 shrink-0 ${plan.highlight ? "text-white/40" : "text-[#AEAEB2]"}`} />
-                        <span className={`text-sm ${plan.highlight ? "text-white/70" : "text-[#6E6E73]"}`}>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <Link href={plan.href}>
-                    <Button
-                      className={`w-full rounded-xl ${
-                        plan.highlight
-                          ? "bg-white text-[#1D1D1F] hover:bg-white/90"
-                          : "bg-[#1D1D1F] text-white hover:bg-black"
-                      }`}
-                      size="lg"
-                    >
-                      {plan.cta}
-                    </Button>
-                  </Link>
-                </div>
+                )}
               </AnimatedSection>
             ))}
           </div>
@@ -514,17 +559,21 @@ export default async function LandingPage() {
       </section>
 
       {/* ── CTA ────────────────────────────────────────────────────────────── */}
-      <section className="py-16 sm:py-24 bg-[#F5F5F7]">
+      <section className="relative py-20 sm:py-28 bg-[#1D1D1F] overflow-hidden">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[700px] h-[400px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.04)_0%,transparent_70%)]" />
+        </div>
         <AnimatedSection>
-          <div className="max-w-2xl mx-auto px-4 text-center">
-            <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-[#1D1D1F] tracking-tight mb-5">
+          <div className="relative max-w-2xl mx-auto px-5 text-center">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/25 mb-4">Get started today</p>
+            <h2 className="text-[28px] sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight mb-5">
               The best founders test their assumptions first.
             </h2>
-            <p className="text-lg text-[#6E6E73] mb-10 leading-relaxed">
+            <p className="text-lg text-white/50 mb-10 leading-relaxed">
               Getting a hard answer early isn&apos;t a setback — it&apos;s an advantage. Know where you stand before you spend a single hour building.
             </p>
             <Link href="/sign-up">
-              <Button size="xl" className="bg-[#1D1D1F] text-white hover:bg-black rounded-2xl shadow-lg">
+              <Button size="xl" className="bg-white text-[#1D1D1F] hover:bg-white/90 rounded-2xl shadow-[0_8px_30px_rgba(255,255,255,0.15)] hover:shadow-[0_12px_40px_rgba(255,255,255,0.2)] active:scale-[0.97] transition-all">
                 Assess My Idea — It&apos;s Free
                 <ArrowRight className="h-5 w-5" />
               </Button>
@@ -534,10 +583,10 @@ export default async function LandingPage() {
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-black/[0.06] bg-white">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-black/[0.05] bg-white">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 py-7 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-[#1D1D1F] rounded flex items-center justify-center">
+            <div className="w-6 h-6 bg-[#1D1D1F] rounded-md flex items-center justify-center shadow-sm">
               <span className="text-white text-[10px] font-bold">V</span>
             </div>
             <span className="text-sm font-semibold text-[#1D1D1F]">Viability First</span>

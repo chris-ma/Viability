@@ -191,15 +191,17 @@ export default async function DashboardPage() {
       {/* ── Stats row ───────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         {[
-          { label: "Total ideas",   value: totalIdeas,       icon: Lightbulb,      color: "text-[#6E6E73]" },
-          { label: "Viable",        value: viableCount,      icon: TrendingUp,     color: "text-green-600" },
-          { label: "Needs work",    value: needsWorkCount,   icon: AlertTriangle,  color: "text-amber-500" },
-          { label: "Fix-It done",   value: fixItDone,        icon: CheckCircle2,   color: "text-[#6E6E73]" },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="dash-stat-card bg-white rounded-2xl ring-1 ring-black/[0.06] p-4">
-            <Icon className={`h-4 w-4 ${color} mb-2`} />
-            <div className="text-2xl font-semibold text-[#1D1D1F] tracking-tight">{value}</div>
-            <div className="text-xs text-[#AEAEB2] mt-0.5">{label}</div>
+          { label: "Total ideas",  value: totalIdeas,     icon: Lightbulb,     iconBg: "bg-[#F5F5F7]",       iconColor: "text-[#6E6E73]",  accent: "" },
+          { label: "Viable",       value: viableCount,    icon: TrendingUp,    iconBg: "bg-green-50",         iconColor: "text-green-600",  accent: "border-t-green-400" },
+          { label: "Needs work",   value: needsWorkCount, icon: AlertTriangle, iconBg: "bg-amber-50",         iconColor: "text-amber-500",  accent: "border-t-amber-400" },
+          { label: "Fix-It done",  value: fixItDone,      icon: CheckCircle2,  iconBg: "bg-blue-50",          iconColor: "text-blue-500",   accent: "border-t-blue-400" },
+        ].map(({ label, value, icon: Icon, iconBg, iconColor, accent }) => (
+          <div key={label} className={`dash-stat-card bg-white rounded-2xl ring-1 ring-black/[0.06] shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-4 border-t-2 ${accent || "border-t-transparent"}`}>
+            <div className={`w-8 h-8 ${iconBg} rounded-xl flex items-center justify-center mb-3`}>
+              <Icon className={`h-4 w-4 ${iconColor}`} />
+            </div>
+            <div className="text-2xl font-bold text-[#1D1D1F] tracking-tight">{value}</div>
+            <div className="text-xs text-[#AEAEB2] mt-0.5 font-medium">{label}</div>
           </div>
         ))}
       </div>
