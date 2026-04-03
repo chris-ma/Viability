@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Lightbulb } from "lucide-react"
 import { getVerdictConfig } from "@/lib/scoring/engine"
 import { formatDate } from "@/lib/utils"
+import { IdeasAnimations } from "@/components/animation/ideas-animations"
 
 export default async function IdeasPage() {
   const { userId: clerkId } = await auth()
@@ -30,7 +31,8 @@ export default async function IdeasPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex items-start justify-between mb-8">
+      <IdeasAnimations />
+      <div id="ideas-header" className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-3xl font-black text-[#1D1D1F]">My Ideas</h1>
           <p className="text-[#1D1D1F]/55 mt-1">All your business idea assessments</p>
@@ -70,7 +72,7 @@ export default async function IdeasPage() {
 
             return (
               <Link key={idea.id} href={href}>
-                <Card className="hover:shadow-md hover:ring-black/[0.10] transition-all cursor-pointer">
+                <Card className="ideas-card hover:shadow-md hover:ring-black/[0.10] transition-all cursor-pointer">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="flex-1 min-w-0">

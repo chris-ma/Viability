@@ -20,6 +20,7 @@ import {
   CheckCircle2,
   Zap,
 } from "lucide-react"
+import { DashboardAnimations } from "@/components/animation/dashboard-animations"
 
 const FREE_LIMIT = 10
 
@@ -134,9 +135,10 @@ export default async function DashboardPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
+      <DashboardAnimations />
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div className="flex items-start justify-between mb-8 gap-4">
+      <div id="dash-header" className="flex items-start justify-between mb-8 gap-4">
         <div>
           <p className="text-sm text-[#AEAEB2] mb-0.5">Good to see you,</p>
           <h1 className="text-2xl font-semibold text-[#1D1D1F] tracking-tight">{firstName}</h1>
@@ -194,7 +196,7 @@ export default async function DashboardPage() {
           { label: "Needs work",    value: needsWorkCount,   icon: AlertTriangle,  color: "text-amber-500" },
           { label: "Fix-It done",   value: fixItDone,        icon: CheckCircle2,   color: "text-[#6E6E73]" },
         ].map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-white rounded-2xl ring-1 ring-black/[0.06] p-4">
+          <div key={label} className="dash-stat-card bg-white rounded-2xl ring-1 ring-black/[0.06] p-4">
             <Icon className={`h-4 w-4 ${color} mb-2`} />
             <div className="text-2xl font-semibold text-[#1D1D1F] tracking-tight">{value}</div>
             <div className="text-xs text-[#AEAEB2] mt-0.5">{label}</div>
@@ -235,7 +237,7 @@ export default async function DashboardPage() {
         ).length
 
         return (
-          <div className="mb-6">
+          <div id="dash-featured" className="mb-6">
             <p className="text-xs font-medium text-[#AEAEB2] uppercase tracking-widest mb-3">
               Latest Project
             </p>
@@ -363,7 +365,7 @@ export default async function DashboardPage() {
 
               return (
                 <Link key={idea.id} href={href}>
-                  <div className="bg-white rounded-2xl ring-1 ring-black/[0.06] p-5 hover:shadow-md hover:ring-black/[0.10] transition-all cursor-pointer h-full flex flex-col">
+                  <div className="dash-project-card bg-white rounded-2xl ring-1 ring-black/[0.06] p-5 hover:shadow-md hover:ring-black/[0.10] transition-all cursor-pointer h-full flex flex-col">
                     {/* Score line */}
                     {cfg && a?.overallScore != null && (
                       <div className="h-0.5 rounded-full mb-4" style={{ backgroundColor: cfg.color, width: `${a.overallScore}%` }} />

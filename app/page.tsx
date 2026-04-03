@@ -18,12 +18,14 @@ import {
   RefreshCcw,
 } from "lucide-react"
 import { AnimatedSection } from "@/components/ui/animated-section"
+import { HeroAnimations } from "@/components/animation/hero-animations"
+import { StatCounter } from "@/components/animation/stat-counter"
 
 const STATS = [
-  { value: "42%", label: "fail from no market need",      footnote: 1 },
-  { value: "29%", label: "run out of cash early",          footnote: 1 },
-  { value: "23%", label: "wrong team or founder fit",      footnote: 1 },
-  { value: "90%", label: "of startups ultimately fail",    footnote: 2 },
+  { numeric: 42, suffix: "%", label: "fail from no market need",      footnote: 1 },
+  { numeric: 29, suffix: "%", label: "run out of cash early",          footnote: 1 },
+  { numeric: 23, suffix: "%", label: "wrong team or founder fit",      footnote: 1 },
+  { numeric: 90, suffix: "%", label: "of startups ultimately fail",    footnote: 2 },
 ]
 
 const FOOTNOTES = [
@@ -175,45 +177,51 @@ export default async function LandingPage() {
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section className="pt-16 sm:pt-24 pb-10 sm:pb-12 px-5 sm:px-6">
+        <HeroAnimations />
         <div className="max-w-6xl mx-auto">
-          <AnimatedSection delay={0}>
-            <div className="text-center mb-10 sm:mb-14">
-              <div className="inline-flex items-center gap-2 bg-[#F5F5F7] rounded-full px-3.5 py-1.5 mb-6 sm:mb-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
-                <span className="text-[12px] sm:text-[13px] text-[#6E6E73] font-medium">Free to start · No credit card</span>
-              </div>
-
-              <h1 className="text-[38px] sm:text-6xl lg:text-[72px] font-bold text-[#1D1D1F] leading-[1.06] tracking-tight mb-5 sm:mb-6">
-                Know if your idea<br />
-                <span className="text-[#6E6E73]">is worth building.</span>
-              </h1>
-
-              <p className="text-[17px] sm:text-xl text-[#6E6E73] max-w-2xl mx-auto mb-3 sm:mb-4 leading-relaxed font-normal">
-                Get a scored, evidence-based verdict on your business idea across 8 viability dimensions — before you spend a single penny building the wrong thing.
-              </p>
-              <p className="text-sm text-[#AEAEB2] max-w-xs sm:max-w-xl mx-auto mb-8 sm:mb-10">
-                Mistakes aren&apos;t failures. They&apos;re the curriculum. Viability First helps you learn faster.
-              </p>
-
-              <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-                <Link href="/sign-up" className="w-full sm:w-auto">
-                  <Button size="xl" className="w-full sm:w-auto bg-[#1D1D1F] text-white hover:bg-black rounded-2xl shadow-lg text-base">
-                    Assess My Idea Free
-                    <ArrowRight className="h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="/demo" className="w-full sm:w-auto">
-                  <Button size="xl" variant="outline" className="w-full sm:w-auto rounded-2xl border-[#D2D2D7] text-[#1D1D1F] hover:bg-[#F5F5F7] text-base">
-                    View Demo
-                  </Button>
-                </Link>
-              </div>
+          <div className="text-center mb-10 sm:mb-14">
+            <div id="hero-badge" className="inline-flex items-center gap-2 bg-[#F5F5F7] rounded-full px-3.5 py-1.5 mb-6 sm:mb-8">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+              <span className="text-[12px] sm:text-[13px] text-[#6E6E73] font-medium">Free to start · No credit card</span>
             </div>
-          </AnimatedSection>
 
-          <AnimatedSection delay={0.12}>
+            <h1 className="text-[38px] sm:text-6xl lg:text-[72px] font-bold text-[#1D1D1F] leading-[1.06] tracking-tight mb-5 sm:mb-6">
+              {["Know", "if", "your", "idea"].map((w) => (
+                <span key={w} className="gsap-hero-word inline-block">{w}&nbsp;</span>
+              ))}
+              <br />
+              <span className="text-[#6E6E73]">
+                {["is", "worth", "building."].map((w, i, arr) => (
+                  <span key={w} className="gsap-hero-word inline-block">{w}{i < arr.length - 1 ? "\u00A0" : ""}</span>
+                ))}
+              </span>
+            </h1>
+
+            <p id="hero-sub" className="text-[17px] sm:text-xl text-[#6E6E73] max-w-2xl mx-auto mb-3 sm:mb-4 leading-relaxed font-normal">
+              Get a scored, evidence-based verdict on your business idea across 8 viability dimensions — before you spend a single penny building the wrong thing.
+            </p>
+            <p id="hero-desc" className="text-sm text-[#AEAEB2] max-w-xs sm:max-w-xl mx-auto mb-8 sm:mb-10">
+              Mistakes aren&apos;t failures. They&apos;re the curriculum. Viability First helps you learn faster.
+            </p>
+
+            <div id="hero-ctas" className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link href="/sign-up" className="w-full sm:w-auto">
+                <Button size="xl" className="w-full sm:w-auto bg-[#1D1D1F] text-white hover:bg-black rounded-2xl shadow-lg text-base">
+                  Assess My Idea Free
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/demo" className="w-full sm:w-auto">
+                <Button size="xl" variant="outline" className="w-full sm:w-auto rounded-2xl border-[#D2D2D7] text-[#1D1D1F] hover:bg-[#F5F5F7] text-base">
+                  View Demo
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div id="hero-mockup">
             <AppMockup />
-          </AnimatedSection>
+          </div>
         </div>
       </section>
 
@@ -230,7 +238,7 @@ export default async function LandingPage() {
               <AnimatedSection key={i} delay={i * 0.08}>
                 <div className="text-center">
                   <div className="text-5xl font-bold mb-2 text-white tracking-tight">
-                    {stat.value}
+                    <StatCounter value={stat.numeric} suffix={stat.suffix} />
                     <sup className="text-sm text-white/30 ml-0.5">[{stat.footnote}]</sup>
                   </div>
                   <div className="text-sm text-white/50">{stat.label}</div>

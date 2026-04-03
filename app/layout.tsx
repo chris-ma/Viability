@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
+import { GsapInit } from "@/components/animation/gsap-init"
+import { PageTransition } from "@/components/animation/page-transition"
 import "./globals.css";
 
 const inter = Inter({
@@ -25,7 +27,8 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`h-full antialiased ${inter.variable}`}>
         <body className="min-h-full flex flex-col bg-white text-[#1D1D1F]">
-          {children}
+          <GsapInit />
+          <PageTransition>{children}</PageTransition>
           <Toaster richColors position="top-right" />
         </body>
       </html>

@@ -1,8 +1,9 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { motion } from "framer-motion"
 import { getVerdictConfig } from "@/lib/scoring/engine"
+import gsap from "gsap"
 
 interface ScoreGaugeProps {
   score: number
@@ -31,13 +32,29 @@ export function ScoreGauge({ score, verdict }: ScoreGaugeProps) {
   const clampedScore = Math.max(0, Math.min(100, score))
   const targetRotate = scoreToRotateDeg(clampedScore)
 
-  // Start needle at 0-score position, animate to actual on mount
   const [rotateDeg, setRotateDeg] = useState(scoreToRotateDeg(0))
+  const [displayScore, setDisplayScore] = useState(0)
+  const scoreRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const t = setTimeout(() => setRotateDeg(targetRotate), 150)
-    return () => clearTimeout(t)
-  }, [targetRotate])
+    // Needle sweep after short delay
+    const t = setTimeout(() => setRotateDeg(targetRotate), 200)
+
+    // GSAP counter for score number
+    const obj = { val: 0 }
+    const tween = gsap.to(obj, {
+      val: clampedScore,
+      duration: 1.6,
+      delay: 0.3,
+      ease: "power2.out",
+      onUpdate: () => setDisplayScore(Math.round(obj.val)),
+    })
+
+    return () => {
+      clearTimeout(t)
+      tween.kill()
+    }
+  }, [targetRotate, clampedScore])
 
   return (
     <motion.div
@@ -98,8 +115,8 @@ export function ScoreGauge({ score, verdict }: ScoreGaugeProps) {
       </div>
 
       {/* Score display */}
-      <div className="text-center -mt-4">
-        <div className="text-6xl font-black text-[#1D1D1F]">{Math.round(score)}</div>
+      <div className="text-center -mt-4" ref={scoreRef}>
+        <div className="text-6xl font-black text-[#1D1D1F] tabular-nums">{displayScore}</div>
         <div className={`text-lg font-bold mt-1 ${config.textColor}`}>{config.label}</div>
       </div>
     </motion.div>

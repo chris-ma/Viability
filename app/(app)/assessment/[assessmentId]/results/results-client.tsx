@@ -1,7 +1,6 @@
 "use client"
 import Link from "next/link"
 import { useState } from "react"
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -29,6 +28,7 @@ import {
 import { useRouter } from "next/navigation"
 import { formatDate } from "@/lib/utils"
 import { toast } from "sonner"
+import { ResultsAnimations } from "@/components/animation/results-animations"
 
 interface ResultsClientProps {
   assessment: {
@@ -182,12 +182,6 @@ function ActionPlan({
   )
 }
 
-const fadeUp = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-40px" as const },
-  transition: { duration: 0.5, ease: "easeOut" as const },
-}
 
 export function ResultsClient({ assessment, dimensionScores, killFlags, previousScores }: ResultsClientProps) {
   const [showKillFlow, setShowKillFlow] = useState(false)
@@ -228,18 +222,19 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+      <ResultsAnimations />
       {/* Header */}
-      <motion.div className="mb-8" {...fadeUp}>
+      <div id="results-header" className="mb-8">
         <div className="flex items-center gap-2 mb-2">
           <Badge variant="secondary" className="text-xs">Assessment Complete</Badge>
           <span className="text-xs text-[#1D1D1F]/40">{formatDate(assessment.completedAt)}</span>
         </div>
         <h1 className="text-3xl font-black text-[#1D1D1F] mb-1">{assessment.idea.title}</h1>
         <p className="text-[#1D1D1F]/55 text-sm">{assessment.idea.industry} · {assessment.idea.model}</p>
-      </motion.div>
+      </div>
 
       {/* ── What to do now ─────────────────────────────────────────────── */}
-      <motion.div className="mb-6" {...fadeUp}>
+      <div id="results-action-plan" className="mb-6">
         <ActionPlan
           verdict={assessment.verdict}
           score={assessment.overallScore}
@@ -247,11 +242,11 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
           assessmentId={assessment.id}
           fixItModules={fixItModules}
         />
-      </motion.div>
+      </div>
 
       {/* Kill Flags Banner */}
       {killFlags.length > 0 && (
-        <motion.div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-5" {...fadeUp}>
+        <div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-5">
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
             <div>
@@ -268,17 +263,11 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Main verdict + gauge */}
-      <motion.div
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
-      >
+      <div id="results-verdict-panel" className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <Card className="lg:col-span-1">
           <CardContent className="p-6">
             <ScoreGauge score={assessment.overallScore} verdict={assessment.verdict} />
@@ -315,16 +304,10 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
             />
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
 
       {/* Dimension breakdown */}
-      <motion.div
-        className="mb-6"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-      >
+      <div className="mb-6">
         <Card>
           <CardHeader>
             <CardTitle>Dimension Breakdown</CardTitle>
@@ -341,18 +324,12 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
             />
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
 
       {/* Fix-It Modules */}
       {fixItModules.length > 0 && (
         <div className="mb-6">
-          <motion.div
-            className="flex items-center gap-3 mb-4"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-          >
+          <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 bg-amber-100/80 rounded-xl flex items-center justify-center">
               <Wrench className="h-4 w-4 text-amber-600" />
             </div>
@@ -360,7 +337,7 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
               <h2 className="text-xl font-black text-[#1D1D1F]">Fix-It Modules</h2>
               <p className="text-sm text-[#1D1D1F]/55">{fixItModules.length} dimension{fixItModules.length > 1 ? "s" : ""} scoring below 50% — here's how to fix them</p>
             </div>
-          </motion.div>
+          </div>
 
           <div className="space-y-4">
             {fixItModules.map((module, idx) => {
@@ -368,13 +345,7 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
               const dimScore = dimensionScores.find((d) => d.dimensionId === module.dimensionId)
 
               return (
-                <motion.div
-                  key={module.dimensionId}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 0.45, ease: "easeOut", delay: idx * 0.08 }}
-                >
+                <div key={module.dimensionId} className="results-fixit-card">
                   <Card id={`fixit-${module.dimensionId}`} className="border-amber-200">
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between gap-4">
@@ -426,7 +397,7 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
               )
             })}
           </div>
@@ -435,13 +406,7 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
 
       {/* Kill Idea Flow */}
       {(isKillVerdict || multipleKillFlags) && (
-        <motion.div
-          className="mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        >
+        <div className="mb-6">
           <Card className="border-red-200 bg-red-50">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
@@ -487,11 +452,11 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       )}
 
       {/* Actions */}
-      <motion.div {...fadeUp}>
+      <div>
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-wrap gap-3 justify-between items-center">
@@ -524,7 +489,7 @@ export function ResultsClient({ assessment, dimensionScores, killFlags, previous
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   )
 }
