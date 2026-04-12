@@ -47,6 +47,7 @@ model User {
   updatedAt     DateTime        @updatedAt
   ideas         Idea[]
   fixItProgress FixItProgress[]
+  bizListings   BizListing[]
 
   @@map("users")
 }
@@ -132,4 +133,158 @@ model ShareToken {
   assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
 
   @@map("share_tokens")
+}
+
+// ─── BizAd Analyzer Models ────────────────────────────────────────────────────
+
+model BizListing {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceType     String   @default("text") // text | pdf | url | manual
+  title          String?
+  rawText        String   @db.Text
+  brokerName     String?
+  locationText   String?
+  askingPrice    Float?
+  currency       String   @default("AUD")
+  analysisStatus String   @default("pending") // pending | processing | completed | failed
+  pipelineStage  String   @default("new") // new | screened | worth_contacting | awaiting_info | reviewing_financials | dd | rejected | closed
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  fields         BizExtractedField[]
+  financials     BizFinancialMetric[]
+  classification BizClassification?
+  riskFlags      BizRiskFlag[]
+  missingInfo    BizMissingInfo[]
+  score          BizScore?
+  valuation      BizValuation?
+  notes          BizNote[]
+
+  @@map("biz_listings")
+}
+
+model BizExtractedField {
+  id               String     @id @default(cuid())
+  listingId        String
+  listing          BizListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  fieldName        String
+  fieldValueText   String?
+  fieldValueNum    Float?
+  confidenceScore  Float?
+  sourceSnippet    String?    @db.Text
+  extractionMethod String     @default("llm") // llm | rule | manual
+  createdAt        DateTime   @default(now())
+
+  @@map("biz_extracted_fields")
+}
+
+model BizFinancialMetric {
+  id              String     @id @default(cuid())
+  listingId       String
+  listing         BizListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  metricType      String     // revenue | ebitda | sde | net_profit | gross_profit | rent | wages
+  amount          Float?
+  periodType      String?    // annual | monthly | weekly
+  confidenceScore Float?
+  sourceSnippet   String?    @db.Text
+  createdAt       DateTime   @default(now())
+
+  @@map("biz_financial_metrics")
+}
+
+model BizClassification {
+  id             String     @id @default(cuid())
+  listingId      String     @unique
+  listing        BizListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  industry       String?
+  businessModel  String?
+  customerType   String?    // b2b | b2c | mixed
+  deliveryMode   String?    // online | physical | hybrid
+  ownerModel     String?    // owner-operated | manager-run
+  revenueModel   String?    // recurring | repeat | transactional
+  lifecycleStage String?    // growth | stable | distressed | lifestyle
+  createdAt      DateTime   @default(now())
+
+  @@map("biz_classifications")
+}
+
+model BizRiskFlag {
+  id              String     @id @default(cuid())
+  listingId       String
+  listing         BizListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  flagCode        String
+  severity        String     // low | medium | high | critical
+  title           String
+  description     String     @db.Text
+  evidenceSnippet String?    @db.Text
+  recommendation  String?    @db.Text
+  createdAt       DateTime   @default(now())
+
+  @@map("biz_risk_flags")
+}
+
+model BizMissingInfo {
+  id                String     @id @default(cuid())
+  listingId         String
+  listing           BizListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  missingCode       String
+  title             String
+  whyItMatters      String?
+  suggestedQuestion String?
+  priority          String     // low | medium | high
+  createdAt         DateTime   @default(now())
+
+  @@map("biz_missing_info")
+}
+
+model BizScore {
+  id                    String     @id @default(cuid())
+  listingId             String     @unique
+  listing               BizListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  completenessScore     Float?
+  financialClarityScore Float?
+  businessQualityScore  Float?
+  riskLevel             Float?
+  valuationScore        Float?
+  pursuitScore          Float?
+  confidence            String?    // high | medium | low
+  recommendation        String?
+  createdAt             DateTime   @default(now())
+
+  @@map("biz_scores")
+}
+
+model BizValuation {
+  id              String     @id @default(cuid())
+  listingId       String     @unique
+  listing         BizListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  profitBasis     String?    // ebitda | sde | net_profit | gross_profit | unknown
+  impliedMultiple Float?
+  estimatedLow    Float?
+  estimatedMid    Float?
+  estimatedHigh   Float?
+  pricePosition   String?    // undervalued | fair | overvalued | uncertain
+  aiSummary       String?    @db.Text
+  positives       String?    @db.Text // JSON array
+  negatives       String?    @db.Text // JSON array
+  pricingView     String?    @db.Text
+  nextSteps       String?    @db.Text // JSON array
+  ddQuestions     String?    @db.Text // JSON array
+  createdAt       DateTime   @default(now())
+
+  @@map("biz_valuations")
+}
+
+model BizNote {
+  id        String     @id @default(cuid())
+  listingId String
+  listing   BizListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  userId    String
+  body      String     @db.Text
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("biz_notes")
 }

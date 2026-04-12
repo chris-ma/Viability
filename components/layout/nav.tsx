@@ -2,12 +2,13 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { UserButton, SignOutButton } from "@clerk/nextjs"
-import { LayoutDashboard, Lightbulb, Wrench, BookOpen, Plus, Settings, LogOut } from "lucide-react"
+import { LayoutDashboard, Lightbulb, Wrench, BookOpen, Plus, Settings, LogOut, Briefcase } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/dashboard",  label: "Dashboard",     icon: LayoutDashboard },
   { href: "/ideas",      label: "My Ideas",       icon: Lightbulb },
+  { href: "/bizad",      label: "BizAd Analyzer", icon: Briefcase },
   { href: "/fix-it",     label: "Fix-It Centre",  icon: Wrench },
   { href: "/resources",  label: "Resources",      icon: BookOpen },
 ]
@@ -16,8 +17,8 @@ const mobileItems = [
   { href: "/dashboard",      label: "Dashboard",  icon: LayoutDashboard },
   { href: "/ideas",          label: "Ideas",      icon: Lightbulb },
   { href: "/assessment/new", label: "New",        icon: Plus },
+  { href: "/bizad",          label: "BizAd",      icon: Briefcase },
   { href: "/fix-it",         label: "Fix-It",     icon: Wrench },
-  { href: "/settings",       label: "Account",    icon: Settings },
 ]
 
 export function AppNav() {
