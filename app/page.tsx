@@ -153,6 +153,17 @@ export default async function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
 
+      {/* ── Free trial announcement bar ────────────────────────────────────── */}
+      <div className="bg-[#1D1D1F] text-white text-center py-2.5 px-4">
+        <p className="text-[12px] sm:text-[13px] leading-none">
+          <span className="text-white/50">Free trial — </span>
+          <span className="text-white font-medium">10 full assessments included, no credit card ever required.</span>
+          <Link href="/sign-up" className="ml-2 inline-flex items-center gap-0.5 text-white/70 hover:text-white font-semibold underline underline-offset-2 transition-colors">
+            Start free <ArrowRight className="h-3 w-3" />
+          </Link>
+        </p>
+      </div>
+
       {/* ── Nav ────────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-black/[0.05]">
         <div className="max-w-6xl mx-auto px-5 sm:px-6 h-14 flex items-center justify-between">
@@ -168,7 +179,7 @@ export default async function LandingPage() {
             </Link>
             <Link href="/sign-up">
               <Button size="sm" className="rounded-full px-4 shadow-sm">
-                Get Started
+                Try Free
               </Button>
             </Link>
           </div>
@@ -186,7 +197,7 @@ export default async function LandingPage() {
           <div className="text-center mb-10 sm:mb-14">
             <div id="hero-badge" className="inline-flex items-center gap-2 bg-[#F5F5F7] rounded-full px-3.5 py-1.5 mb-6 sm:mb-8 ring-1 ring-black/[0.06]">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0 animate-pulse-dot" />
-              <span className="text-[12px] sm:text-[13px] text-[#6E6E73] font-medium">Free to start · No credit card</span>
+              <span className="text-[12px] sm:text-[13px] text-[#6E6E73] font-medium">10 assessments free · No credit card ever</span>
             </div>
 
             <h1 className="text-[38px] sm:text-6xl lg:text-[72px] font-bold text-[#1D1D1F] leading-[1.06] tracking-tight mb-5 sm:mb-6">
@@ -211,7 +222,7 @@ export default async function LandingPage() {
             <div id="hero-ctas" className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link href="/sign-up" className="w-full sm:w-auto">
                 <Button size="xl" className="w-full sm:w-auto rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.18)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.22)] text-base">
-                  Assess My Idea Free
+                  Start Free Trial
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
@@ -220,6 +231,20 @@ export default async function LandingPage() {
                   View Demo
                 </Button>
               </Link>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-5">
+              {[
+                "10 free assessments included",
+                "No credit card required",
+                "Upgrade anytime",
+              ].map((item) => (
+                <span key={item} className="flex items-center gap-1.5 text-xs text-[#AEAEB2]">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
+                  {item}
+                </span>
+              ))}
             </div>
           </div>
 
@@ -574,9 +599,10 @@ export default async function LandingPage() {
             </p>
             <Link href="/sign-up">
               <Button size="xl" className="bg-white text-[#1D1D1F] hover:bg-white/90 rounded-2xl shadow-[0_8px_30px_rgba(255,255,255,0.15)] hover:shadow-[0_12px_40px_rgba(255,255,255,0.2)] active:scale-[0.97] transition-all">
-                Assess My Idea — It&apos;s Free
+                Start Your Free Trial
                 <ArrowRight className="h-5 w-5" />
               </Button>
+              <p className="text-white/30 text-xs mt-4">10 assessments free · No credit card · Cancel anytime</p>
             </Link>
           </div>
         </AnimatedSection>
