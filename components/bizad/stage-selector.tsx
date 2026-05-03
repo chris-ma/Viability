@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 const STAGES = [
   { value: "new",                  label: "New" },
@@ -13,14 +14,15 @@ const STAGES = [
   { value: "closed",               label: "Closed" },
 ]
 
-function stageStyle(stage: string): string {
+function stageStyle(stage: string) {
   switch (stage) {
-    case "dd":               return "bg-blue-100 text-blue-700"
-    case "worth_contacting": return "bg-green-100 text-green-700"
-    case "reviewing_financials": return "bg-purple-100 text-purple-700"
-    case "rejected":         return "bg-red-100 text-red-700"
-    case "closed":           return "bg-gray-100 text-gray-500"
-    default:                 return "bg-[#F5F5F7] text-[#6E6E73]"
+    case "dd":                   return "bg-blue-100 text-blue-700 border-blue-200"
+    case "worth_contacting":     return "bg-emerald-100 text-emerald-700 border-emerald-200"
+    case "reviewing_financials": return "bg-purple-100 text-purple-700 border-purple-200"
+    case "awaiting_info":        return "bg-amber-100 text-amber-700 border-amber-200"
+    case "rejected":             return "bg-rose-100 text-rose-600 border-rose-200"
+    case "closed":               return "bg-slate-100 text-slate-500 border-slate-200"
+    default:                     return "bg-sky-50 text-sky-600 border-sky-200"
   }
 }
 
@@ -47,17 +49,32 @@ export function BizStageSelector({
   }
 
   return (
-    <div className="shrink-0">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.3, type: "spring", stiffness: 220 }}
+      className="shrink-0 relative"
+    >
       <select
         value={stage}
         onChange={handleChange}
         disabled={saving}
-        className={`text-xs font-semibold px-3 py-1.5 rounded-full border-0 outline-none cursor-pointer appearance-none ${stageStyle(stage)}`}
+        className={`text-xs font-semibold px-3 py-1.5 rounded-full border outline-none cursor-pointer appearance-none shadow-sm transition-all duration-200 ${stageStyle(stage)} ${saving ? "opacity-60" : ""}`}
       >
         {STAGES.map(s => (
           <option key={s.value} value={s.value}>{s.label}</option>
         ))}
       </select>
-    </div>
+      <AnimatePresence>
+        {saving && (
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full"
+          />
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 }
